@@ -53,7 +53,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>com.examples.pubsub.streaming.PubSubToGCS</mainClass>
+              <mainClass>com.examples.pubsub.streaming.ValidatorDataFlow</mainClass>
             </manifest>
           </archive>
         </configuration>
