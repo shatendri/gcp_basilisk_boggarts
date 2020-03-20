@@ -11,7 +11,7 @@
   </parent>
   <groupId>com.epam.gcp.csv.processor</groupId>
   <artifactId>csv-processor</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0</version>
   <name>csv-processor</name>
 
   <properties>
@@ -84,5 +84,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>
