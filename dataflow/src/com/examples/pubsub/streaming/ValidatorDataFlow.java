@@ -1,16 +1,16 @@
 package com.examples.pubsub.streaming;
 
 import com.examples.pubsub.streaming.dto.TestDto;
+import org.apache.beam.examples.common.WriteOneFilePerWindow;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.extensions.gcp.util.Transport;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
 import org.apache.beam.sdk.options.*;
 import org.apache.beam.sdk.options.Validation.Required;
-import org.apache.beam.sdk.transforms.DoFn;
-import org.apache.beam.sdk.transforms.PTransform;
-import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.transforms.SimpleFunction;
-import org.apache.beam.sdk.values.PCollection;
+import org.apache.beam.sdk.transforms.windowing.FixedWindows;
+import org.apache.beam.sdk.transforms.windowing.Window;
+import org.joda.time.Duration;
 
 import java.io.IOException;
 
@@ -51,18 +51,18 @@ public class ValidatorDataFlow {
     }
 
     static void runLocalValidatorDataFlow(ValidatorDataFlowOptions options) {
+        options.setTempLocation("gs://gcp-trainings/dataflow/");
+
         Pipeline p = Pipeline.create(options);
         String topic = "projects/my-project-oril/topics/" + options.getInputTopic();
         String subscription = "projects/my-project-oril/subscriptions/" + options.getSubscription();
         p.apply("GetPubSub", PubsubIO.readStrings().fromSubscription(subscription))
-                .apply("ExtractData", ParDo.of(new DoFn<String, TestDto>() {
-                    @ProcessElement
-                    public void processElement(ProcessContext c) throws Exception {
-                        String rowJson = c.element();
+                // 2) Group the messages into fixed-sized minute intervals.
+                .apply(Window.into(FixedWindows.of(Duration.standardMinutes(1))))
+                // 3) Write one file to GCS for every window of messages.
+                .apply("Write Files to GCS", new WriteOneFilePerWindow(options.getOutput(), 1));
 
-                        Transport.getJsonFactory().fromString(rowJson, TestDto.class);
-                    }
-                }));
+
         p.run().waitUntilFinish();
     }
 
