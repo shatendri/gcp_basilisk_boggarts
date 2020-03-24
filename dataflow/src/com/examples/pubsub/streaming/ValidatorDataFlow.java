@@ -28,11 +28,11 @@ public class ValidatorDataFlow {
 
         void setInputTopic(String value);
 
-        @Description("Output file's window size in number of minutes.")
-        @Default.Integer(1)
-        Integer getWindowSize();
+        @Description("The Cloud Pub/Sub subscription to read from.")
+        @Default.String("test")
+        String getSubscription();
 
-        void setWindowSize(Integer value);
+        void setSubscription(String value);
 
         @Description("Path of the output file including its filename prefix.")
         @Required
@@ -53,16 +53,16 @@ public class ValidatorDataFlow {
     static void runLocalValidatorDataFlow(ValidatorDataFlowOptions options) {
         Pipeline p = Pipeline.create(options);
         String topic = "projects/my-project-oril/topics/" + options.getInputTopic();
-        PCollection<TestDto> jsons = p.apply("GetPubSub", PubsubIO.readStrings().fromTopic(topic))
+        String subscription = "projects/my-project-oril/subscriptions/" + options.getSubscription();
+        p.apply("GetPubSub", PubsubIO.readStrings().fromSubscription(subscription))
                 .apply("ExtractData", ParDo.of(new DoFn<String, TestDto>() {
                     @ProcessElement
                     public void processElement(ProcessContext c) throws Exception {
                         String rowJson = c.element();
 
-
+                        Transport.getJsonFactory().fromString(rowJson, TestDto.class);
                     }
                 }));
-        jsons.apply(new ObjectValidation());
         p.run().waitUntilFinish();
     }
 
@@ -74,22 +74,6 @@ public class ValidatorDataFlow {
             } catch (IOException e) {
                 throw new RuntimeException("Failed parsing table row json", e);
             }
-        }
-    }
-
-    private static class ObjectValidation
-            extends PTransform<PCollection<TestDto>, PCollection<String>> {
-        @Override
-        public PCollection<String> expand(PCollection<TestDto> input) {
-            return input
-                    .apply(ParDo.of(new ExtractUserAndTimestamp()));
-        }
-    }
-
-    static class ExtractUserAndTimestamp extends DoFn<TestDto, String> {
-        @ProcessElement
-        public void processElement(ProcessContext c) {
-            c.output(c.element().toString());
         }
     }
 }
