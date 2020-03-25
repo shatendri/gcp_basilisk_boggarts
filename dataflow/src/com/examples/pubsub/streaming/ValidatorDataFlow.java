@@ -1,18 +1,28 @@
 package com.examples.pubsub.streaming;
 
-import com.examples.pubsub.streaming.dto.TestDto;
-import org.apache.beam.examples.common.WriteOneFilePerWindow;
+import com.google.datastore.v1.Entity;
+import com.google.datastore.v1.Key;
+import com.google.datastore.v1.PartitionId;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 import org.apache.beam.sdk.Pipeline;
-import org.apache.beam.sdk.extensions.gcp.util.Transport;
+import org.apache.beam.sdk.coders.StringUtf8Coder;
+import org.apache.beam.sdk.io.gcp.datastore.DatastoreIO;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
 import org.apache.beam.sdk.options.*;
 import org.apache.beam.sdk.options.Validation.Required;
-import org.apache.beam.sdk.transforms.SimpleFunction;
+import org.apache.beam.sdk.transforms.Create;
+import org.apache.beam.sdk.transforms.DoFn;
+import org.apache.beam.sdk.transforms.PTransform;
+import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.transforms.windowing.FixedWindows;
 import org.apache.beam.sdk.transforms.windowing.Window;
+import org.apache.beam.sdk.values.PCollection;
 import org.joda.time.Duration;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class ValidatorDataFlow {
     public interface ValidatorDataFlowOptions extends PipelineOptions, StreamingOptions {
@@ -53,27 +63,85 @@ public class ValidatorDataFlow {
     static void runLocalValidatorDataFlow(ValidatorDataFlowOptions options) {
         options.setTempLocation("gs://gcp-trainings/dataflow/");
 
-        Pipeline p = Pipeline.create(options);
+        Pipeline pipeline = Pipeline.create(options);
         String topic = "projects/my-project-oril/topics/" + options.getInputTopic();
         String subscription = "projects/my-project-oril/subscriptions/" + options.getSubscription();
-        p.apply("GetPubSub", PubsubIO.readStrings().fromSubscription(subscription))
+        pipeline.apply("GetPubSub", PubsubIO.readStrings().fromSubscription(subscription))
                 // 2) Group the messages into fixed-sized minute intervals.
-                .apply(Window.into(FixedWindows.of(Duration.standardMinutes(1))))
-                // 3) Write one file to GCS for every window of messages.
-                .apply("Write Files to GCS", new WriteOneFilePerWindow(options.getOutput(), 1));
+                .apply(Window.into(FixedWindows.of(Duration.standardMinutes(1))));
+        List<String> keyNames = Arrays.asList("L1", "L2"); // Somewhat you have new keys to store
+        PTransform<PCollection<Entity>, ?> write =
+                DatastoreIO.v1().write().withProjectId("my-project-oril"); // This is a typical write operation
 
+        pipeline.
+                apply("GetInMemory", Create.of(keyNames)).setCoder(StringUtf8Coder.of()) // L1 and L2 are loaded
+                .apply("StringToEntity", ParDo.of(new JsonToEntity()))
+                .apply(write);
 
-        p.run().waitUntilFinish();
+        pipeline.run().waitUntilFinish();
     }
 
-    static class ParseJson extends SimpleFunction<String, TestDto> {
-        @Override
-        public TestDto apply(String input) {
-            try {
-                return Transport.getJsonFactory().fromString(input, TestDto.class);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed parsing table row json", e);
-            }
+
+    /**
+     * DoFn for converting a Protov3 JSON Encoded Entity to a Datastore Entity.
+     * JSON in mapped protov3:
+     * https://developers.google.com/protocol-buffers/docs/proto3#json
+     */
+    public static class JsonToEntity extends DoFn<String, Entity> {
+        private EntityJsonParser entityJsonParser;
+
+        @Setup
+        public void setup() {
+            entityJsonParser = new EntityJsonParser();
+        }
+
+        @ProcessElement
+        public void processElement(ProcessContext c) throws InvalidProtocolBufferException {
+            String entityJson = c.element();
+            Entity.Builder entityBuilder = Entity.newBuilder();
+            entityJsonParser.merge(entityJson, entityBuilder);
+
+            // Build entity who's key has an empty project Id.
+            // This allows DatastoreIO to handle what project Entities are loaded into
+            Key k = entityBuilder.build().getKey();
+            entityBuilder.setKey(Key.newBuilder()
+                    .addAllPath(k.getPathList())
+                    .setPartitionId(PartitionId.newBuilder()
+                            .setProjectId("")
+                            .setNamespaceId(k.getPartitionId().getNamespaceId())));
+
+            c.output(entityBuilder.build());
         }
     }
+
+    /**
+     * Converts a JSON String to an Entity.
+     */
+    public static class EntityJsonParser {
+
+        // A cached jsonParser
+        private JsonFormat.Parser jsonParser;
+
+        public EntityJsonParser() {
+            JsonFormat.TypeRegistry typeRegistry = JsonFormat.TypeRegistry.newBuilder()
+                    .add(Entity.getDescriptor())
+                    .build();
+
+            jsonParser = JsonFormat.parser()
+                    .usingTypeRegistry(typeRegistry);
+        }
+
+        public void merge(String json, Entity.Builder entityBuilder)
+                throws InvalidProtocolBufferException {
+            jsonParser.merge(json, entityBuilder);
+        }
+
+        public Entity parse(String json) throws InvalidProtocolBufferException {
+            Entity.Builder entityBuilter = Entity.newBuilder();
+            merge(json, entityBuilter);
+            return entityBuilter.build();
+        }
+
+    }
+
 }
