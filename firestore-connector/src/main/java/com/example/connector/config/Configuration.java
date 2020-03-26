@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import java.io.IOException;
-
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -28,7 +26,7 @@ public class Configuration {
 
 
     @Bean
-    public Firestore firestore() throws IOException {
+    public Firestore firestore() {
         return FirestoreOptions.getDefaultInstance().newBuilder()
                 .build()
                 .getService();
