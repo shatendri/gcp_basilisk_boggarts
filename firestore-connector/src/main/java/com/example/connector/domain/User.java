@@ -11,7 +11,10 @@ import lombok.ToString;
 @AllArgsConstructor
 public class User {
 
+    private String id;
     private String firstName;
     private String lastName;
     private String email;
+    private String gender;
+    private String ipAddress;
 }

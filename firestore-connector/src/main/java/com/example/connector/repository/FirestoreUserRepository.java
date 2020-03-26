@@ -6,6 +6,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.spotify.futures.ApiFuturesExtra;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
@@ -16,7 +17,8 @@ import java.util.concurrent.CompletableFuture;
 @Repository
 public class FirestoreUserRepository {
 
-    private static final String USERS_COLLECTION_NAME = "users";
+    @Value("${firestore.user-collection}")
+    private String usersCollectionName;
 
     private final Firestore firestore;
 
@@ -26,7 +28,7 @@ public class FirestoreUserRepository {
 
     public Mono<QuerySnapshot> findUsers(Map<String, String> queryParams) {
 
-        CollectionReference usersCollectionReference = firestore.collection(USERS_COLLECTION_NAME);
+        CollectionReference usersCollectionReference = firestore.collection(usersCollectionName);
         Optional<Map.Entry<String, String>> first = queryParams.entrySet().stream().findFirst();
 
         Query query = null;
