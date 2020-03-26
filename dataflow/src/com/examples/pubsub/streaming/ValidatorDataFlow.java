@@ -1,30 +1,33 @@
 package com.examples.pubsub.streaming;
 
+import com.examples.pubsub.streaming.dto.TestDto;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsonschema.JsonSchema;
+import com.google.api.client.json.Json;
+import com.google.api.services.bigquery.model.TableRow;
 import com.google.datastore.v1.Entity;
 import com.google.datastore.v1.Key;
 import com.google.datastore.v1.PartitionId;
+import com.google.gson.Gson;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import org.apache.beam.sdk.Pipeline;
-import org.apache.beam.sdk.coders.StringUtf8Coder;
-import org.apache.beam.sdk.io.gcp.datastore.DatastoreIO;
+import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
 import org.apache.beam.sdk.options.*;
 import org.apache.beam.sdk.options.Validation.Required;
-import org.apache.beam.sdk.transforms.Create;
 import org.apache.beam.sdk.transforms.DoFn;
-import org.apache.beam.sdk.transforms.PTransform;
 import org.apache.beam.sdk.transforms.ParDo;
-import org.apache.beam.sdk.transforms.windowing.FixedWindows;
-import org.apache.beam.sdk.transforms.windowing.Window;
 import org.apache.beam.sdk.values.PCollection;
-import org.joda.time.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+
 
 public class ValidatorDataFlow {
+    private final static Logger LOG = LoggerFactory.getLogger(ValidatorDataFlow.class);
     public interface ValidatorDataFlowOptions extends PipelineOptions, StreamingOptions {
         @Description("The Local file to read from.")
         @Default.String("C:\\Users\\Miha\\dataflow\\test.json")
@@ -39,7 +42,7 @@ public class ValidatorDataFlow {
         void setInputTopic(String value);
 
         @Description("The Cloud Pub/Sub subscription to read from.")
-        @Default.String("test")
+        @Default.String("dataflow-job")
         String getSubscription();
 
         void setSubscription(String value);
@@ -50,6 +53,11 @@ public class ValidatorDataFlow {
         String getOutput();
 
         void setOutput(String value);
+
+        @Description("Table spec to write the output to")
+        ValueProvider<String> getOutputTableSpec();
+
+        void setOutputTableSpec(ValueProvider<String> value);
     }
 
     public static void main(String[] args) throws IOException {
@@ -60,24 +68,28 @@ public class ValidatorDataFlow {
         runLocalValidatorDataFlow(options);
     }
 
-    static void runLocalValidatorDataFlow(ValidatorDataFlowOptions options) {
+    static void runLocalValidatorDataFlow(ValidatorDataFlowOptions options) throws JsonMappingException {
         options.setTempLocation("gs://gcp-trainings/dataflow/");
+        ObjectMapper mapper = new ObjectMapper();
+        JsonSchema schema = mapper.generateJsonSchema(TestDto.class);
+
 
         Pipeline pipeline = Pipeline.create(options);
         String topic = "projects/my-project-oril/topics/" + options.getInputTopic();
         String subscription = "projects/my-project-oril/subscriptions/" + options.getSubscription();
-        pipeline.apply("GetPubSub", PubsubIO.readStrings().fromSubscription(subscription))
-                // 2) Group the messages into fixed-sized minute intervals.
-                .apply(Window.into(FixedWindows.of(Duration.standardMinutes(1))));
-        List<String> keyNames = Arrays.asList("L1", "L2"); // Somewhat you have new keys to store
-        PTransform<PCollection<Entity>, ?> write =
-                DatastoreIO.v1().write().withProjectId("my-project-oril"); // This is a typical write operation
+        LOG.info("Reading from subscription: " + subscription);
+        PCollection<String> messages = pipeline.apply("GetPubSub", PubsubIO.readStrings().fromSubscription(subscription));
 
-        pipeline.
-                apply("GetInMemory", Create.of(keyNames)).setCoder(StringUtf8Coder.of()) // L1 and L2 are loaded
-                .apply("StringToEntity", ParDo.of(new JsonToEntity()))
-                .apply(write);
 
+        // Write to BigQuery
+        LOG.info("Write to BigQuery " + messages.toString());
+        PCollection<TableRow> tableRow = messages.apply("ToTableRow", ParDo.of(new PrepData.ToTableRow()));
+        tableRow.apply("WriteToBQ",
+                BigQueryIO.writeTableRows()
+                        .to(String.format("%1$s.%2$s", "dataflow", "dataflow"))
+                        .withJsonSchema(schema.toString())
+                        .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND));
+        LOG.info("Writing completed");
         pipeline.run().waitUntilFinish();
     }
 
@@ -143,5 +155,4 @@ public class ValidatorDataFlow {
         }
 
     }
-
 }
