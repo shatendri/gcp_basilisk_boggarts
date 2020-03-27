@@ -27,20 +27,14 @@ public class FirestoreUserRepository {
     public Mono<QuerySnapshot> findUsers(Map<String, String> queryParams) {
 
         CollectionReference usersCollectionReference = firestore.collection(usersCollectionName);
-        Optional<Map.Entry<String, String>> first = queryParams.entrySet().stream().findFirst();
-
-        Query query = null;
-        if (first.isPresent()) {
-            query = usersCollectionReference.whereEqualTo(first.get().getKey(), first.get().getValue());
-            queryParams.remove(first.get().getKey());
-        }
+        Query query = usersCollectionReference;
 
         for (Map.Entry<String, String> entry : queryParams.entrySet()) {
             query = query.whereEqualTo(entry.getKey(), entry.getValue());
         }
 
         ApiFuture<QuerySnapshot> querySnapshotApiFuture =
-                Optional.ofNullable(query)
+                Optional.of(query)
                         .map(Query::get)
                         .orElse(usersCollectionReference.get());
 

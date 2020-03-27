@@ -1,2 +1,7 @@
 firestore:
   user-collection: users
+  service-account-key:
+    path:
+#spring:
+#  profiles:
+#    actrive: dev
