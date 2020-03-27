@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    gcp:
+      project-id: my-project-oril
+      pub-sub:
+        csv-processor-subscription-name: projects/my-project-oril/subscriptions/cloud-storage-notifications-topic-csv-processor-subscription
+        dataflow-json-processing-topic-name: projects/my-project-oril/topics/dataflow-json-processing-topic
+logging:
+  level:
+    com:
+      epam:
+        gcp: DEBUG
