@@ -4,6 +4,7 @@ import com.epam.gcp.csv.processor.pubsub.message.publisher.PubSubMessagePublishe
 import com.epam.gcp.csv.processor.pubsub.message.receiver.PubSubMessageReceiver;
 import com.epam.gcp.csv.processor.service.storage.StorageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.cloud.gcp.pubsub.integration.inbound.PubSubInboundChannelAdapter;
@@ -17,6 +18,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+@Slf4j
 @Configuration
 public class GcpPubSubConfig {
 
@@ -29,6 +31,9 @@ public class GcpPubSubConfig {
     PubSubInboundChannelAdapter adapter =
         new PubSubInboundChannelAdapter(pubSubTemplate, subscriptionName);
     adapter.setOutputChannel(pubSubInputChannel);
+
+    log.debug("Subscribed for {}!", subscriptionName);
+
     return adapter;
   }
 
