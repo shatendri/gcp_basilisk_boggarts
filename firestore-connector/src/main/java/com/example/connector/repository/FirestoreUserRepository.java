@@ -1,10 +1,8 @@
 package com.example.connector.repository;
 
+import com.example.connector.domain.User;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.Query;
-import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.*;
 import com.spotify.futures.ApiFuturesExtra;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -46,9 +44,22 @@ public class FirestoreUserRepository {
                         .map(Query::get)
                         .orElse(usersCollectionReference.get());
 
-        CompletableFuture<QuerySnapshot> documentSnapshotListenableFuture =
+        CompletableFuture<QuerySnapshot> querySnapshotFuture =
                 ApiFuturesExtra.toCompletableFuture(querySnapshotApiFuture);
 
-        return Mono.fromFuture(documentSnapshotListenableFuture);
+        return Mono.fromFuture(querySnapshotFuture);
     }
+
+    public void save(User user) {
+        CollectionReference usersCollectionReference = firestore.collection(usersCollectionName);
+        DocumentReference documentReference = usersCollectionReference.document();
+        user.setId(documentReference.getId());
+        documentReference.set(user);
+    }
+
+    public void delete(User user) {
+        CollectionReference usersCollectionReference = firestore.collection(usersCollectionName);
+        usersCollectionReference.document(user.getId()).delete();
+    }
+
 }

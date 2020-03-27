@@ -8,7 +8,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -25,6 +24,14 @@ public class UserService {
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().get(0)));
 
         return userRepository.findUsers(queryParams).map(qs -> qs.toObjects(User.class));
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
+    public void delete(User user) {
+        userRepository.delete(user);
     }
 
 }
