@@ -3,8 +3,8 @@ spring:
     gcp:
       project-id: my-project-oril
       pub-sub:
-        csv-processor-subscription-name: projects/my-project-oril/subscriptions/cloud-storage-notifications-topic-csv-processor-subscription
-        dataflow-json-processing-topic-name: projects/my-project-oril/topics/dataflow-json-processing-topic
+        csv-processor-subscription-name: projects/gcp-trainings-272313/subscriptions/gcp-csv-files-bucket-notifications-topic-csv-processor-subscription
+        dataflow-json-processing-topic-name: projects/gcp-trainings-272313/topics/dataflow-json-processing-topic
 logging:
   level:
     com:
