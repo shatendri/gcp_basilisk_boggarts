@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 
-
 public class PrepData {
     public static class ToTableRow extends DoFn<String, TableRow> {
         private final static Logger LOG = LoggerFactory.getLogger(ToTableRow.class);
