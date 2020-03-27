@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
@@ -27,15 +28,20 @@ public class CsvFilesStorageService implements StorageService {
             pathToFileInBucket
         );
 
-    Files.createDirectories(pathToFile.getParent())
-        .resolve(pathToFile.getFileName());
+    Path pathToStoredFile =
+        Files.createDirectories(pathToFile.getParent())
+            .resolve(buildFileName(pathToFile));
 
-    Files.copy(inputStream, pathToFile);
+    Files.copy(inputStream, pathToStoredFile);
 
-    return pathToFile;
+    return pathToStoredFile;
   }
 
   private String getStorageRootDirectory() throws IOException {
     return resourceLoader.getResource("/").getFile().getAbsolutePath();
+  }
+
+  private String buildFileName(Path pathToFile) {
+    return UUID.randomUUID().toString() + "-" + pathToFile.getFileName().toString();
   }
 }

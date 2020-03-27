@@ -1,10 +1,12 @@
 spring:
+  profiles:
+    active: default
   cloud:
     gcp:
-      project-id: my-project-oril
+      project-id: gcp-trainings-272313
       pub-sub:
-        csv-processor-subscription-name: projects/my-project-oril/subscriptions/cloud-storage-notifications-topic-csv-processor-subscription
-        dataflow-json-processing-topic-name: projects/my-project-oril/topics/dataflow-json-processing-topic
+        csv-processor-subscription-name: projects/gcp-trainings-272313/subscriptions/csv-files-bucket-notifications-topic-csv-processor-subscription
+        dataflow-json-processing-topic-name: projects/gcp-trainings-272313/topics/dataflow-json-processing-topic
 logging:
   level:
     com:
