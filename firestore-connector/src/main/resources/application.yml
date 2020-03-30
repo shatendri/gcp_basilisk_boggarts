@@ -1,7 +1,17 @@
 firestore:
-  user-collection: users9
-  service-account-key:
-    path:
-#spring:
-#  profiles:
-#    actrive: dev
+  users-collection-name: users
+  service-account-key-path: service-account-key-path
+spring:
+  profiles:
+    active: default
+logging:
+  level:
+    web: TRACE
+okta:
+  oauth2:
+    issuer: issuer
+    client-id: client-id
+    client-secret: client-secret
+    token-path: /v1/token
+    token-redirect-uri: http://localhost:8080/authorization-code/callback
+    authorize-path: /v1/authorize
