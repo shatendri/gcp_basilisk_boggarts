@@ -5,7 +5,7 @@ import com.example.connector.axon.coreapi.event.UserDeletedEvent;
 import com.example.connector.axon.coreapi.event.UserUpdatedEvent;
 import com.example.connector.axon.coreapi.query.FindUsersQuery;
 import com.example.connector.domain.User;
-import com.example.connector.repository.FirestoreUserRepository;
+import com.example.connector.repository.UserRepositoryImpl;
 import org.apache.commons.beanutils.BeanUtils;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
@@ -17,9 +17,9 @@ import java.util.List;
 @Component
 public class UserProjector {
 
-    private FirestoreUserRepository userRepository;
+    private UserRepositoryImpl userRepository;
 
-    public UserProjector(FirestoreUserRepository userRepository) {
+    public UserProjector(UserRepositoryImpl userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -44,6 +44,6 @@ public class UserProjector {
 
     @QueryHandler
     public List<User> getUsers(FindUsersQuery query) {
-        return userRepository.findUsers(query.getQueryParams()).block();
+        return userRepository.findAll(query.getQueryParams()).block();
     }
 }

@@ -1,5 +1,5 @@
 firestore:
-  users-collection-name: users
+  users-collection: users8
   service-account-key-path: service-account-key-path
 spring:
   profiles:
