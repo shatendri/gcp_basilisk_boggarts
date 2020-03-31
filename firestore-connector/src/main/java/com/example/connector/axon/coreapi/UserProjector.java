@@ -52,6 +52,11 @@ public class UserProjector {
 
     @QueryHandler
     public List<User> getUsers(String bigQuery) {
-        return bigQueryUserRepository.findAll().block();
+        try {
+            return bigQueryUserRepository.findAll().block();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

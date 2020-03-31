@@ -1,9 +1,14 @@
 firestore:
   users-collection: users8
   service-account-key-path: service-account-key-path
+bigquery:
+  dataset: dataflow
 spring:
+  cloud:
+    gcp:
+      project-id: gcp-trainings-272313
   profiles:
-    active: default
+    active: dev
 logging:
   level:
     web: TRACE
