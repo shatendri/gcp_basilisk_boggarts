@@ -35,6 +35,11 @@ public class UserController {
         return queryGateway.query(findUsersQuery, ResponseTypes.multipleInstancesOf(User.class));
     }
 
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, path = "/bigquery")
+    public CompletableFuture<List<User>> getUsersFromBigQuery() {
+        return queryGateway.query("bigQuery", ResponseTypes.multipleInstancesOf(User.class));
+    }
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public void saveUser(@RequestBody User user) throws ExecutionException, InterruptedException, InvocationTargetException, IllegalAccessException {
         AddUserCommand addUserCommand = new AddUserCommand();

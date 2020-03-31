@@ -5,6 +5,7 @@ import com.example.connector.axon.coreapi.event.UserDeletedEvent;
 import com.example.connector.axon.coreapi.event.UserUpdatedEvent;
 import com.example.connector.axon.coreapi.query.FindUsersQuery;
 import com.example.connector.domain.User;
+import com.example.connector.repository.BigQueryUserRepository;
 import com.example.connector.repository.UserRepositoryImpl;
 import org.apache.commons.beanutils.BeanUtils;
 import org.axonframework.eventhandling.EventHandler;
@@ -17,10 +18,12 @@ import java.util.List;
 @Component
 public class UserProjector {
 
-    private UserRepositoryImpl userRepository;
+    private final UserRepositoryImpl userRepository;
+    private final BigQueryUserRepository bigQueryUserRepository;
 
-    public UserProjector(UserRepositoryImpl userRepository) {
+    public UserProjector(UserRepositoryImpl userRepository, BigQueryUserRepository bigQueryUserRepository) {
         this.userRepository = userRepository;
+        this.bigQueryUserRepository = bigQueryUserRepository;
     }
 
     @EventHandler
@@ -45,5 +48,10 @@ public class UserProjector {
     @QueryHandler
     public List<User> getUsers(FindUsersQuery query) {
         return userRepository.findAll(query.getQueryParams()).block();
+    }
+
+    @QueryHandler
+    public List<User> getUsers(String bigQuery) {
+        return bigQueryUserRepository.findAll().block();
     }
 }
