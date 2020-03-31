@@ -34,7 +34,7 @@ public class ValidatorDataFlow {
         PCollection<String> messages = pipeline.apply("GetPubSub", PubsubIO.readStrings()
                 .fromSubscription(subscription));
 
-        messages.apply("StringToEntity", ParDo.of(new JsonToUserDto()));
+        PCollection<String> validMessages = messages.apply("FilterValidMessages", ParDo.of(new JsonToUserDto()));
 
         // Write to BigQuery
 
@@ -42,8 +42,8 @@ public class ValidatorDataFlow {
         ObjectMapper mapper = new ObjectMapper();
         JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(mapper);
         JsonSchema schema = schemaGen.generateSchema(UserDto.class);
-        LOG.info("Write to BigQuery " + messages.toString());
-        PCollection<TableRow> tableRow = messages.apply("ToTableRow", ParDo.of(new PrepData.ToTableRow()));
+        LOG.info("Write to BigQuery " + validMessages.toString());
+        PCollection<TableRow> tableRow = validMessages.apply("ToTableRow", ParDo.of(new PrepData.ToTableRow()));
         tableRow.apply("WriteToBQ",
                 BigQueryIO.writeTableRows()
                         .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
