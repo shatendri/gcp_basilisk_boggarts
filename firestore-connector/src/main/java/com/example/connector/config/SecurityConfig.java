@@ -1,5 +1,6 @@
 package com.example.connector.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
@@ -12,11 +13,18 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 public class SecurityConfig {
 
   @Bean
-  public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+  public SecurityWebFilterChain securityWebFilterChain(
+      ServerHttpSecurity http,
+      ObjectMapper objectMapper
+  ) {
+
     return
         http
-            .authorizeExchange()
+            .exceptionHandling()
+            .accessDeniedHandler(new CustomServerAccessDeniedHandler(objectMapper))
+            .and()
 
+            .authorizeExchange()
             .pathMatchers(HttpMethod.GET, "/users")
             .hasAnyAuthority("ROLE_ADMIN", "ROLE_EDITOR", "ROLE_READER")
 
@@ -31,7 +39,9 @@ public class SecurityConfig {
 
             .anyExchange().authenticated()
             .and()
+
             .oauth2ResourceServer()
-            .jwt().and().and().build();
+            .jwt()
+            .and().and().build();
   }
 }
