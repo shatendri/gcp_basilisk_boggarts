@@ -3,10 +3,11 @@ firestore:
   service-account-key-path: service-account-key-path
 bigquery:
   dataset: dataflow
+  table: dataflow
 spring:
   cloud:
     gcp:
-      project-id: gcp-trainings-272313
+      project-id: gcp-trainings-272313bigquery
   profiles:
     active: dev
 logging:
