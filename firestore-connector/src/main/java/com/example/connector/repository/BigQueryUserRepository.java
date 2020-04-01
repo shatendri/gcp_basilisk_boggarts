@@ -30,16 +30,14 @@ public class BigQueryUserRepository {
 
         // Run the query using the BigQuery object
         for (FieldValueList row : bigQuery.query(queryConfig).iterateAll()) {
-            User user = User.builder().build();
-            for (FieldValue val : row) {
-                user.setId(row.get("id").getStringValue());
-                user.setFirstName(row.get("first_name").getStringValue());
-                user.setLastName(row.get("last_name").getStringValue());
-                user.setGender(row.get("gender").getStringValue());
-                user.setEmail(row.get("email").getStringValue());
-                user.setIpAddress(row.get("ip_address").getStringValue());
-                System.out.println(val);
-            }
+            User user = User.builder()
+                    .id(row.get("id").getStringValue())
+                    .firstName(row.get("first_name").getStringValue())
+                    .lastName(row.get("last_name").getStringValue())
+                    .gender(row.get("gender").getStringValue())
+                    .email(row.get("email").getStringValue())
+                    .ipAddress(row.get("ip_address").getStringValue())
+                    .build();
             users.add(user);
         }
         return users;
