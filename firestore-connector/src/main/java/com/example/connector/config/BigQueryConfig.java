@@ -47,7 +47,7 @@ public class BigQueryConfig {
         return BigQueryOptions.newBuilder()
                 .setCredentials(
                         GoogleCredentials.fromStream(
-                                new FileInputStream(new File("C:\\Users\\Miha\\GCP\\bq-2-gcp-trainings-272313-c51605ce03a2.json"))
+                                new FileInputStream(new File(serviceAccountKeyPath))
                         )
                 )
                 .build()

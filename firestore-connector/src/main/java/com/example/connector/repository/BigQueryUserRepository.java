@@ -3,7 +3,6 @@ package com.example.connector.repository;
 import com.example.connector.config.BigQueryProperties;
 import com.example.connector.domain.User;
 import com.google.cloud.bigquery.BigQuery;
-import com.google.cloud.bigquery.FieldValue;
 import com.google.cloud.bigquery.FieldValueList;
 import com.google.cloud.bigquery.QueryJobConfiguration;
 import org.springframework.stereotype.Component;
