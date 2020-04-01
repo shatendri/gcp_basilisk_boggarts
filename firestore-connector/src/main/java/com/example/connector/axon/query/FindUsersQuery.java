@@ -1,4 +1,4 @@
-package com.example.connector.axon.coreapi.query;
+package com.example.connector.axon.query;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

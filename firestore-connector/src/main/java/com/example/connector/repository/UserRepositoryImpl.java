@@ -2,10 +2,7 @@ package com.example.connector.repository;
 
 import com.example.connector.domain.User;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.Query;
-import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.*;
 import com.spotify.futures.ApiFuturesExtra;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -15,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -56,15 +54,21 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void update(User user) {
+    public void update(User user) throws ExecutionException, InterruptedException {
         CollectionReference usersCollectionReference = firestore.collection(usersCollectionName);
-        usersCollectionReference.document(user.getId()).set(user);
+        usersCollectionReference.whereEqualTo("id", user.getId()).get().get().getDocuments().stream()
+                .map(DocumentSnapshot::getReference)
+                .findAny()
+                .ifPresent(dr->dr.set(user));
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(String id) throws ExecutionException, InterruptedException {
         CollectionReference usersCollectionReference = firestore.collection(usersCollectionName);
-        usersCollectionReference.document(id).delete();
+        usersCollectionReference.whereEqualTo("id", id).get().get().getDocuments().stream()
+                .map(DocumentSnapshot::getReference)
+                .findAny()
+                .ifPresent(DocumentReference::delete);
     }
 
 }

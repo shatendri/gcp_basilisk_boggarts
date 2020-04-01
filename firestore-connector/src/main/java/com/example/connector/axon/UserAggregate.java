@@ -1,11 +1,11 @@
-package com.example.connector.axon.coreapi;
+package com.example.connector.axon;
 
-import com.example.connector.axon.coreapi.command.AddUserCommand;
-import com.example.connector.axon.coreapi.command.DeleteUserCommand;
-import com.example.connector.axon.coreapi.command.UpdateUserCommand;
-import com.example.connector.axon.coreapi.event.UserAddedEvent;
-import com.example.connector.axon.coreapi.event.UserDeletedEvent;
-import com.example.connector.axon.coreapi.event.UserUpdatedEvent;
+import com.example.connector.axon.command.DeleteUserCommand;
+import com.example.connector.axon.command.AddUserCommand;
+import com.example.connector.axon.command.UpdateUserCommand;
+import com.example.connector.axon.event.UserAddedEvent;
+import com.example.connector.axon.event.UserDeletedEvent;
+import com.example.connector.axon.event.UserUpdatedEvent;
 import lombok.Data;
 import org.apache.commons.beanutils.BeanUtils;
 import org.axonframework.commandhandling.CommandHandler;
@@ -28,9 +28,10 @@ public class UserAggregate {
     private String gender;
     private String ipAddress;
 
-    protected UserAggregate() {
+    public UserAggregate() {
         // For Axon instantiation
     }
+
 
     @CommandHandler
     public UserAggregate(AddUserCommand addUserCommand) throws InvocationTargetException, IllegalAccessException {
@@ -57,13 +58,14 @@ public class UserAggregate {
     }
 
     @CommandHandler
-    public void handle(DeleteUserCommand deleteUserCommand) throws InvocationTargetException, IllegalAccessException {
+    public void handle(DeleteUserCommand deleteUserCommand) {
         UserDeletedEvent userDeletedEvent = new UserDeletedEvent(deleteUserCommand.getId());
         AggregateLifecycle.apply(userDeletedEvent);
     }
 
     @EventSourcingHandler
     private void on(UserDeletedEvent userDeletedEvent) {
+        this.setId(userDeletedEvent.getId());
         AggregateLifecycle.markDeleted();
     }
 }

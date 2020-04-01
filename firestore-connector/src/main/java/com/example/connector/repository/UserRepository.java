@@ -1,11 +1,11 @@
 package com.example.connector.repository;
 
 import com.example.connector.domain.User;
-import com.google.cloud.firestore.QuerySnapshot;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
-import reactor.core.publisher.Mono;
+import java.util.concurrent.ExecutionException;
 
 public interface UserRepository {
 
@@ -13,7 +13,7 @@ public interface UserRepository {
 
   void save(User user);
 
-  void update(User user);
+  void update(User user) throws ExecutionException, InterruptedException;
 
-  void delete(String id);
+  void delete(String id) throws ExecutionException, InterruptedException;
 }

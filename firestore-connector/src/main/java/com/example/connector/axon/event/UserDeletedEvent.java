@@ -1,4 +1,4 @@
-package com.example.connector.axon.coreapi.event;
+package com.example.connector.axon.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

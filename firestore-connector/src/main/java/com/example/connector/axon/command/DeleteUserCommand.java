@@ -1,4 +1,4 @@
-package com.example.connector.axon.coreapi.command;
+package com.example.connector.axon.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

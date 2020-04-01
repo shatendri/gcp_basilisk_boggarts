@@ -1,5 +1,5 @@
 firestore:
-  users-collection: users8
+  users-collection: users10
   service-account-key-path: service-account-key-path
 spring:
   profiles:
@@ -15,3 +15,6 @@ okta:
     token-path: /v1/token
     token-redirect-uri: http://localhost:8080/authorization-code/callback
     authorize-path: /v1/authorize
+axoniq:
+  axonserver:
+    hostname: http://34.68.198.203
