@@ -3,6 +3,7 @@ package com.example.connector.controller;
 import com.example.connector.axon.coreapi.command.AddUserCommand;
 import com.example.connector.axon.coreapi.command.DeleteUserCommand;
 import com.example.connector.axon.coreapi.command.UpdateUserCommand;
+import com.example.connector.axon.coreapi.query.FindAllUsersFromBigQuery;
 import com.example.connector.axon.coreapi.query.FindUsersQuery;
 import com.example.connector.domain.User;
 import org.apache.commons.beanutils.BeanUtils;
@@ -33,6 +34,11 @@ public class UserController {
     public CompletableFuture<List<User>> getUsers(@RequestParam Map<String, String> queryParams) {
         FindUsersQuery findUsersQuery = new FindUsersQuery(queryParams);
         return queryGateway.query(findUsersQuery, ResponseTypes.multipleInstancesOf(User.class));
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, path = "/bigquery")
+    public CompletableFuture<List<User>> getUsersFromBigQuery() {
+        return queryGateway.query(new FindAllUsersFromBigQuery(), ResponseTypes.multipleInstancesOf(User.class));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
