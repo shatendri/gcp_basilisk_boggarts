@@ -34,7 +34,7 @@ public class SecurityConfig {
             .pathMatchers(HttpMethod.POST, "/users")
             .hasAnyAuthority("ROLE_ADMIN")
 
-            .pathMatchers("/authorization-url")
+            .pathMatchers("/authorization-url", "/swagger-ui.html", "/v3/api-docs/**", "/webjars/swagger-ui/**")
             .permitAll()
 
             .anyExchange().authenticated()
