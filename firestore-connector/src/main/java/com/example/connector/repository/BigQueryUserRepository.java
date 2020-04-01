@@ -6,12 +6,12 @@ import com.google.cloud.bigquery.FieldValue;
 import com.google.cloud.bigquery.FieldValueList;
 import com.google.cloud.bigquery.QueryJobConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-@Component
+@Repository
 public class BigQueryUserRepository {
 
     @Autowired
@@ -19,7 +19,7 @@ public class BigQueryUserRepository {
 
     public Mono<List<User>> findAll() throws InterruptedException {
 
-        String query = "SELECT column FROM table;";
+        String query = "SELECT * FROM dataflow.dataflow;";
         QueryJobConfiguration queryConfig =
                 QueryJobConfiguration.newBuilder(query).build();
 
