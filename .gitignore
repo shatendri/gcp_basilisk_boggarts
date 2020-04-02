@@ -35,5 +35,11 @@ gcp-credentials.json
 # XML
 *.xml
 
+#iml
+*.iml
+
 # IntellijIdea files
 *.idea
+
+# DS_Store
+*.DS_Store
