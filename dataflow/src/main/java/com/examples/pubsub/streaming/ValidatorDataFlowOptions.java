@@ -11,7 +11,7 @@ public interface ValidatorDataFlowOptions extends StreamingOptions, GcpOptions {
     void setSubscription(String value);
 
     @Description("GCP service account key location")
-    @Default.String("C:\\Users\\Miha\\GCP\\gcp-trainings-272313-ed9f45f0c577.json")
+    @Default.String("GCP service account key location in .json format")
     String getKeyFilePath();
 
     void setKeyFilePath(String keyFilePath);

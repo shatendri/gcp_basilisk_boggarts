@@ -5,7 +5,7 @@ Compile this Dataflow pipeline into a runnable Jar (pubsub-to-bq.jar). Then call
 
 ```bash
 java.exe -jar "C:\Jars\pubsub-streaming.jar" 
-    --runner=DataflowRunner
+    --runner=DataflowRunner  (optional - specify this in case running on GCP)
     --project='your project Id'
     --tempLocation='storage bucket with saging folder for dataflow job'
     --subscription='Topic subscription to read messages from'
@@ -13,10 +13,10 @@ java.exe -jar "C:\Jars\pubsub-streaming.jar"
     --bqDataSet='BigQuery dataset name'
     --bqTable='BigQuery table name'
 ```
-
-set environment variable GOOGLE_APPLICATION_CREDENTIALS='GCP service account key location'
-
-Parameters formatted view:
+N.B! In case you are running this beauty in your local environment you should not provide environment variable: 
+```bash
+GOOGLE_APPLICATION_CREDENTIALS=GCP service account key location in .json format
+```
 
 - Only provide .json key files for GCP.
 - Pipeline can support queues with batched messages.
