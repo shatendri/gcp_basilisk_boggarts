@@ -106,7 +106,6 @@
                     <version>1</version>
                     <dockerDirectory>reactive-rest-api-appengine/</dockerDirectory>
                     <appEngineDirectory>reactive-rest-api-appengine/</appEngineDirectory>
-                    <stopPreviousVersion>true</stopPreviousVersion>
                 </configuration>
             </plugin>
             <plugin>
