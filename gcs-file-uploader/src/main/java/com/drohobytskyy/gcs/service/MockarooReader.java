@@ -19,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class MockarooReader {
 
+    public static final String KEY = "key";
     HttpClient httpClient;
     MockarooParamsContainer mockarooParamsContainer;
 
@@ -28,8 +29,6 @@ public class MockarooReader {
         this.httpClient = httpClient;
         this.mockarooParamsContainer = mockarooParamsContainer;
     }
-
-    public static final String KEY = "key";
 
     public Optional<byte[]> downloadFileFromMockaroo() {
         log.info("Creating an Http Request.");

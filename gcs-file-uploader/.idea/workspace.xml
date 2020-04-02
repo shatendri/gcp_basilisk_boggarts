@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d759c92c-68ca-4700-9ade-922a878fd1b2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/vcs.xml" beforeDir="false" />
+    <list default="true" id="d759c92c-68ca-4700-9ade-922a878fd1b2" name="Default Changelist" comment="deleting unnecessary files from branch;&#10;added xml to gitignore.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/drohobytskyy/gcs/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/drohobytskyy/gcs/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/drohobytskyy/gcs/service/MockarooReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/drohobytskyy/gcs/service/MockarooReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/home.mustache" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/home.mustache" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,7 +113,19 @@
       <option name="presentableId" value="Default" />
       <updated>1585135042785</updated>
     </task>
+    <task id="LOCAL-00001" summary="deleting unnecessary files from branch;&#10;added xml to gitignore.">
+      <created>1585836672457</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1585836672457</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="deleting unnecessary files from branch;&#10;added xml to gitignore." />
+    <option name="LAST_COMMIT_MESSAGE" value="deleting unnecessary files from branch;&#10;added xml to gitignore." />
   </component>
   <component name="WindowStateProjectService">
     <state x="442" y="-730" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1585832828777">
@@ -142,10 +152,10 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="458" y="205" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1440.900/452.-1080.1920.1080@0.0.1440.900" timestamp="1585152796887" />
-    <state x="338" y="-938" key="CommitChangelistDialog2" timestamp="1585836578010">
+    <state x="338" y="-938" key="CommitChangelistDialog2" timestamp="1585836839156">
       <screen x="-231" y="-1080" width="1920" height="1080" />
     </state>
-    <state x="338" y="-938" key="CommitChangelistDialog2/-231.-1080.1920.1080/0.0.1440.900@-231.-1080.1920.1080" timestamp="1585836578010" />
+    <state x="338" y="-938" key="CommitChangelistDialog2/-231.-1080.1920.1080/0.0.1440.900@-231.-1080.1920.1080" timestamp="1585836839156" />
     <state width="1878" height="196" key="GridCell.Tab.0.bottom" timestamp="1585831433122">
       <screen x="-231" y="-1080" width="1920" height="1080" />
     </state>
