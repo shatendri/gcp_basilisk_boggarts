@@ -1,4 +1,4 @@
-package com.drohobytskyy.gcs.Config;
+package com.drohobytskyy.gcs.config;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Version;

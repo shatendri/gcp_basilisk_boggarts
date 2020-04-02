@@ -31,3 +31,6 @@ gcp-credentials.json
 
 # XML
 *.xml
+
+# IntellijIdea files
+*.idea
