@@ -1,6 +1,7 @@
 package com.examples.pubsub.streaming;
 
 import com.examples.pubsub.streaming.dto.UserDto;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
@@ -30,14 +31,30 @@ public class ValidatorDataFlow {
 
         Pipeline pipeline = Pipeline.create(options);
 
+        // Read messages from PubSub
         PCollection<String> messages = readMessagesFromPubSub(options, pipeline);
 
-        // Validate me
+        // Validate messages
         PCollection<UserDto> validMessages = messages.apply("FilterValidMessages", ParDo.of(new JsonToUserDto()));
 
+        // Write to Firestore
         validMessages.apply("Write to Firestore", ParDo.of(new FirestoreConnector(options.getKeyFilePath())));
 
         // Write to BigQuery
+        writeToBigQuery(options, validMessages);
+
+        pipeline.run().waitUntilFinish();
+
+    }
+
+    private static PCollection<String> readMessagesFromPubSub(ValidatorDataFlowOptions options, Pipeline pipeline) {
+        String subscription = "projects/" + options.getProject() + "/subscriptions/" + options.getSubscription();
+        LOG.info("Reading from subscription: " + subscription);
+        return pipeline.apply("GetPubSub", PubsubIO.readStrings()
+                .fromSubscription(subscription));
+    }
+
+    private static void writeToBigQuery(ValidatorDataFlowOptions options, PCollection<UserDto> validMessages) throws JsonMappingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(mapper);
         JsonSchema schema = schemaGen.generateSchema(UserDto.class);
@@ -52,15 +69,5 @@ public class ValidatorDataFlow {
         } catch (Exception e) {
             LOG.error(e.getMessage());
         }
-
-        pipeline.run().waitUntilFinish();
-
-    }
-
-    private static PCollection<String> readMessagesFromPubSub(ValidatorDataFlowOptions options, Pipeline pipeline) {
-        String subscription = "projects/" + options.getProject() + "/subscriptions/" + options.getSubscription();
-        LOG.info("Reading from subscription: " + subscription);
-        return pipeline.apply("GetPubSub", PubsubIO.readStrings()
-                .fromSubscription(subscription));
     }
 }
