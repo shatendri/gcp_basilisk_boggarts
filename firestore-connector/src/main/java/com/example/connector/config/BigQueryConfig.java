@@ -54,10 +54,9 @@ public class BigQueryConfig {
                 .getService();
     }
 
-    @Profile("dev")
     @Bean
-    public BigQueryTemplate bigQueryTemplate() throws IOException {
-        return new BigQueryTemplate(bigQueryWithCreds(), dataset);
+    public BigQueryTemplate bigQueryTemplate(BigQuery bigQuery) {
+        return new BigQueryTemplate(bigQuery, dataset);
     }
 
 }
