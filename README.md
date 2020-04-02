@@ -12,6 +12,7 @@ java.exe -jar "C:\Jars\pubsub-streaming.jar"
     --keyFilePath='GCP service account key location'
     --bqDataSet='BigQuery dataset name'
     --bqTable='BigQuery table name'
+    --firestoreCollection='Firestore Collection name'
 ```
 N.B! In case you are running this beauty in your local environment you should not provide environment variable: 
 ```bash
