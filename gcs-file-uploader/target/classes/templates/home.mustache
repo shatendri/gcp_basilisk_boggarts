@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>CSV Carrier</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<div class="container">
+  <div class="center">
+    <div>
+      <h2>CSV Carrier</h2>
+    </div>
+    <div>
+      <form method="post">
+        <table>
+          <tr>
+            <td><label>Count of seconds between attempts [1-100] :</label></td>
+            <td><input type="number" name="supposedInterval" placeholder="seconds" min="3" max="30">
+            </td>
+          </tr>
+          <tr>
+            <td><label>Is application supposed to work? true/false</label></td>
+            <td><input type=text name="isSupposedToWork"></td>
+          </tr>
+          <tr>
+            <td colspan="2" align="center">
+              <button type="submit">Submit</button>
+            </td>
+          </tr>
+        </table>
+        <br><br>
+      </form>
+    </div>
+    <div>
+
+      {{#isRunning}}
+        <div>
+          <b>Status: </b>
+          <font color="green">The file is uploaded every {{interval}} seconds.</font>
+        </div>
+      {{/isRunning}}
+
+      {{^isRunning}}
+        <div>
+          <b>Status: </b>
+          <font color="red">The app is napping right now.</font>
+        </div>
+
+        {{#errors}}
+          Invalid input:
+          {{errors}} <br>
+        {{/errors}}
+      {{/isRunning}}
+
+
+      {{#errors}}
+        Invalid input:
+        {{errors}} <br>
+      {{/errors}}
+
+    </div>
+  </div>
+</div>
+</body>
+
+<style>
+.container {
+  height: 350px;
+  position: relative;
+  border: 3px solid green;
+}
+
+.center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+</style>
+</html>

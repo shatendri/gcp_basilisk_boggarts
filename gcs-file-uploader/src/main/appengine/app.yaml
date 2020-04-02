@@ -1,0 +1,3 @@
+service: carrier
+runtime: java11
+entrypoint: java -noverify -jar GCS-Carrier.jar
