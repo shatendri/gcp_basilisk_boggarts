@@ -7,14 +7,9 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import com.google.api.services.bigquery.model.TableRow;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.FirestoreOptions;
-import com.google.datastore.v1.Entity;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO;
-import org.apache.beam.sdk.io.gcp.datastore.DatastoreIO;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
-import org.apache.beam.sdk.transforms.PTransform;
 import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.values.PCollection;
 import org.slf4j.Logger;
@@ -34,28 +29,23 @@ public class ValidatorDataFlow {
         options.setGcpCredential(credentials);
 
         Pipeline pipeline = Pipeline.create(options);
-        String subscription = "projects/" + options.getProject() + "/subscriptions/" + options.getSubscription();
-        LOG.info("Reading from subscription: " + subscription);
-        PCollection<String> messages = pipeline.apply("GetPubSub", PubsubIO.readStrings()
-                .fromSubscription(subscription));
 
+        PCollection<String> messages = readMessagesFromPubSub(options, pipeline);
+
+        // Validate me
         PCollection<UserDto> validMessages = messages.apply("FilterValidMessages", ParDo.of(new JsonToUserDto()));
 
         validMessages.apply("Write to Firestore", ParDo.of(new FirestoreConnector(options.getKeyFilePath())));
 
         // Write to BigQuery
-        //Uncomment after creating BigQuery on GCP
         ObjectMapper mapper = new ObjectMapper();
         JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(mapper);
         JsonSchema schema = schemaGen.generateSchema(UserDto.class);
-        LOG.info("Write to BigQuery " + validMessages.toString());
         try {
             PCollection<TableRow> tableRow = validMessages.apply("ToTableRow", ParDo.of(new PrepData.ToTableRow()));
             tableRow.apply("WriteToBQ",
                     BigQueryIO.writeTableRows()
-                            .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
                             .to(String.format("%s.%s", options.getBqDataSet(), options.getBqTable()))
-                            .skipInvalidRows()
                             .withJsonSchema(schema.toString())
                             .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND));
             LOG.info("Writing completed");
@@ -65,5 +55,12 @@ public class ValidatorDataFlow {
 
         pipeline.run().waitUntilFinish();
 
+    }
+
+    private static PCollection<String> readMessagesFromPubSub(ValidatorDataFlowOptions options, Pipeline pipeline) {
+        String subscription = "projects/" + options.getProject() + "/subscriptions/" + options.getSubscription();
+        LOG.info("Reading from subscription: " + subscription);
+        return pipeline.apply("GetPubSub", PubsubIO.readStrings()
+                .fromSubscription(subscription));
     }
 }

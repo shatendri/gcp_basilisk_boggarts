@@ -22,15 +22,15 @@ public class JsonToUserDto extends DoFn<String, UserDto> {
 
         try {
             userDto = gson.fromJson(entityJson, UserDto.class);
-        } catch (JsonSyntaxException e) {
+            if (UserDtoValidator.isUserDtoValid(userDto)) {
+                c.output(userDto);
+            } else {
+                LOG.info("UserDto is not valid");
+            }
+        } catch (Exception e) {
             LOG.info("Cast json to UserDto was failed:" + e.getMessage());
             e.printStackTrace();
         }
 
-        if (UserDtoValidator.isUserDtoValid(userDto)) {
-            c.output(userDto);
-        } else {
-            LOG.info("UserDto is not valid");
-        }
     }
 }

@@ -13,7 +13,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collections;
 
-public class FirestoreConnector extends DoFn<UserDto, String> {
+public class FirestoreConnector extends DoFn<UserDto, UserDto> {
 
     private final static Logger LOG = LoggerFactory.getLogger(JsonToUserDto.class);
 
@@ -24,15 +24,14 @@ public class FirestoreConnector extends DoFn<UserDto, String> {
     }
 
     @ProcessElement
-    public void processElement(ProcessContext c) throws IOException {
+    public void processElement(ProcessContext c) throws Exception {
         Firestore firestore = FirestoreOptions.newBuilder()
                 .setCredentials(ServiceAccountCredentials.fromStream(new FileInputStream(filePath))
                         .createScoped(Collections.singletonList("https://www.googleapis.com/auth/cloud-platform")))
                 .build()
                 .getService();
-
         try {
-            DocumentReference docRef = firestore.collection("Users").document();
+            DocumentReference docRef = firestore.collection("dataflow").document();
             docRef.set(c.element());
             LOG.info("Saved to Firestore");
         } catch (Exception e) {
