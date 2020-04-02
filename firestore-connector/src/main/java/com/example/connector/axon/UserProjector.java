@@ -1,10 +1,6 @@
 package com.example.connector.axon;
 
-import com.example.connector.axon.coreapi.event.UserAddedEvent;
-import com.example.connector.axon.coreapi.event.UserDeletedEvent;
-import com.example.connector.axon.coreapi.event.UserUpdatedEvent;
 import com.example.connector.axon.coreapi.query.FindAllUsersFromBigQuery;
-import com.example.connector.axon.coreapi.query.FindUsersQuery;
 import com.example.connector.axon.event.UserAddedEvent;
 import com.example.connector.axon.event.UserDeletedEvent;
 import com.example.connector.axon.event.UserUpdatedEvent;
@@ -16,7 +12,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;

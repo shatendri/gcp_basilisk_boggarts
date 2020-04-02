@@ -1,13 +1,9 @@
 package com.example.connector.controller;
 
-import com.example.connector.axon.coreapi.command.AddUserCommand;
-import com.example.connector.axon.coreapi.command.DeleteUserCommand;
-import com.example.connector.axon.coreapi.command.UpdateUserCommand;
-import com.example.connector.axon.coreapi.query.FindAllUsersFromBigQuery;
-import com.example.connector.axon.coreapi.query.FindUsersQuery;
 import com.example.connector.axon.command.AddUserCommand;
 import com.example.connector.axon.command.DeleteUserCommand;
 import com.example.connector.axon.command.UpdateUserCommand;
+import com.example.connector.axon.coreapi.query.FindAllUsersFromBigQuery;
 import com.example.connector.axon.query.FindUsersQuery;
 import com.example.connector.domain.User;
 import org.apache.commons.beanutils.BeanUtils;
@@ -22,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/users")
