@@ -25,6 +25,7 @@ public class PrepData {
                 LOG.debug("Timestamp overwrite to - " + LocalDateTime.now());
                 outputRow.set("timestamp", LocalDateTime.now().toString());
                 c.output(outputRow);
+                LOG.info("Writing to BigQuery " + outputRow);
             } catch (Exception e) {
                 LOG.error(ExceptionUtils.getStackTrace(e));
             }

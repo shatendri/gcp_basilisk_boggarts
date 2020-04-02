@@ -37,11 +37,12 @@ public class ValidatorDataFlow {
         // Validate messages
         PCollection<UserDto> validMessages = messages.apply("FilterValidMessages", ParDo.of(new JsonToUserDto()));
 
-        // Write to Firestore
-        validMessages.apply("Write to Firestore", ParDo.of(new FirestoreConnector(options.getKeyFilePath())));
-
         // Write to BigQuery
         writeToBigQuery(options, validMessages);
+
+        // Write to Firestore
+        validMessages.apply("Write to Firestore", ParDo.of(new FirestoreConnector(options.getKeyFilePath(),
+                options.getFirestoreCollection())));
 
         pipeline.run().waitUntilFinish();
 

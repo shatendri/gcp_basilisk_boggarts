@@ -17,9 +17,11 @@ public class FirestoreConnector extends DoFn<UserDto, UserDto> {
     private final static Logger LOG = LoggerFactory.getLogger(JsonToUserDto.class);
 
     private final String filePath;
+    private final String firestoreCollection;
 
-    public FirestoreConnector(String filePath) {
+    public FirestoreConnector(String filePath, String firestoreCollection) {
         this.filePath = filePath;
+        this.firestoreCollection = firestoreCollection;
     }
 
     @ProcessElement
@@ -30,7 +32,7 @@ public class FirestoreConnector extends DoFn<UserDto, UserDto> {
                 .build()
                 .getService();
         try {
-            DocumentReference docRef = firestore.collection("dataflow").document();
+            DocumentReference docRef = firestore.collection(firestoreCollection).document();
             docRef.set(c.element());
             LOG.info("Saved to Firestore");
         } catch (Exception e) {

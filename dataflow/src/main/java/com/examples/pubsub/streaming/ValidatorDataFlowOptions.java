@@ -19,10 +19,18 @@ public interface ValidatorDataFlowOptions extends StreamingOptions, GcpOptions {
     @Description("BigQuery dataset name")
     @Default.String("dataflow")
     String getBqDataSet();
+
     void setBqDataSet(String dataSet);
 
     @Description("BigQuery table name")
     @Default.String("dataflow")
     String getBqTable();
+
     void setBqTable(String table);
+
+    @Description("Firestore Collection name")
+    @Default.String("dataflow")
+    String getFirestoreCollection();
+
+    void setFirestoreCollection(String collection);
 }
