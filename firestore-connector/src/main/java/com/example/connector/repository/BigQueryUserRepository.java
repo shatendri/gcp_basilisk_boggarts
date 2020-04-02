@@ -31,11 +31,11 @@ public class BigQueryUserRepository {
         for (FieldValueList row : bigQuery.query(queryConfig).iterateAll()) {
             User user = User.builder()
                     .id(row.get("id").getStringValue())
-                    .first_name(row.get("first_name").getStringValue())
-                    .last_name(row.get("last_name").getStringValue())
+                    .firstName(row.get("first_name").getStringValue())
+                    .lastName(row.get("last_name").getStringValue())
                     .gender(row.get("gender").getStringValue())
                     .email(row.get("email").getStringValue())
-                    .ip_address(row.get("ip_address").getStringValue())
+                    .ipAddress(row.get("ip_address").getStringValue())
                     .build();
             users.add(user);
         }

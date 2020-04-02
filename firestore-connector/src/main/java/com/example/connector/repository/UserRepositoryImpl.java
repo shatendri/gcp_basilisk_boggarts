@@ -1,18 +1,16 @@
 package com.example.connector.repository;
 
 import com.example.connector.domain.User;
-import com.google.api.core.ApiFuture;
+import com.example.connector.util.UserMapToDtoConverter;
 import com.google.cloud.firestore.*;
-import com.spotify.futures.ApiFuturesExtra;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -27,7 +25,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Mono<List<User>> findAll(Map<String, String> queryParams) {
+    public List<User> findAll(Map<String, String> queryParams) throws ExecutionException, InterruptedException {
 
         CollectionReference usersCollectionReference = firestore.collection(usersCollectionName);
         Query query = usersCollectionReference;
@@ -36,30 +34,36 @@ public class UserRepositoryImpl implements UserRepository {
             query = query.whereEqualTo(entry.getKey(), entry.getValue());
         }
 
-        ApiFuture<QuerySnapshot> querySnapshotApiFuture =
-                Optional.of(query)
-                        .map(Query::get)
-                        .orElse(usersCollectionReference.get());
 
-        CompletableFuture<QuerySnapshot> querySnapshotFuture =
-                ApiFuturesExtra.toCompletableFuture(querySnapshotApiFuture);
-
-        return Mono.fromFuture(querySnapshotFuture).map(qs -> qs.toObjects(User.class));
+        return Optional.of(query)
+                .map(Query::get)
+                .get()
+                .get()
+                .getDocuments().stream()
+                .map(QueryDocumentSnapshot::getData)
+                .map(map ->
+                        map.entrySet().stream()
+                                .collect(Collectors.toMap(Map.Entry::getKey, val -> (String) val.getValue())))
+                .map(UserMapToDtoConverter::convertFrom)
+                .collect(Collectors.toList());
     }
 
     @Override
     public void save(User user) {
+        Map<String, String> userMap = UserMapToDtoConverter.convertFrom(user);
         CollectionReference usersCollectionReference = firestore.collection(usersCollectionName);
-        usersCollectionReference.add(user);
+        usersCollectionReference.add(userMap);
     }
 
     @Override
     public void update(User user) throws ExecutionException, InterruptedException {
+        Map<String, String> userMap = UserMapToDtoConverter.convertFrom(user);
         CollectionReference usersCollectionReference = firestore.collection(usersCollectionName);
-        usersCollectionReference.whereEqualTo("id", user.getId()).get().get().getDocuments().stream()
+        usersCollectionReference.whereEqualTo("id", user.getId())
+                .get().get().getDocuments().stream()
                 .map(DocumentSnapshot::getReference)
-                .findAny()
-                .ifPresent(dr->dr.set(user));
+                .findFirst()
+                .ifPresent(dr -> dr.set(userMap));
     }
 
     @Override
@@ -67,7 +71,7 @@ public class UserRepositoryImpl implements UserRepository {
         CollectionReference usersCollectionReference = firestore.collection(usersCollectionName);
         usersCollectionReference.whereEqualTo("id", id).get().get().getDocuments().stream()
                 .map(DocumentSnapshot::getReference)
-                .findAny()
+                .findFirst()
                 .ifPresent(DocumentReference::delete);
     }
 

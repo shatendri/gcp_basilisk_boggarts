@@ -12,6 +12,7 @@ import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.InvocationTargetException;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/users")
@@ -31,15 +33,19 @@ public class UserController {
         this.queryGateway = queryGateway;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<List<User>> getUsers(@RequestParam Map<String, String> queryParams) {
+    @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<User> getUsers(@RequestParam Map<String, String> queryParams) throws ExecutionException, InterruptedException {
         FindUsersQuery findUsersQuery = new FindUsersQuery(queryParams);
-        return Mono.fromFuture(queryGateway.query(findUsersQuery, ResponseTypes.multipleInstancesOf(User.class)));
+        CompletableFuture<List<User>> query = queryGateway.query(
+                findUsersQuery, ResponseTypes.multipleInstancesOf(User.class));
+        return Flux.fromStream(query.get().stream());
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, path = "/bigquery")
-    public CompletableFuture<List<User>> getUsersFromBigQuery() {
-        return queryGateway.query(new FindAllUsersFromBigQuery(), ResponseTypes.multipleInstancesOf(User.class));
+    public Flux<User> getUsersFromBigQuery() throws ExecutionException, InterruptedException {
+        CompletableFuture<List<User>> users = queryGateway.query(
+                new FindAllUsersFromBigQuery(), ResponseTypes.multipleInstancesOf(User.class));
+        return Flux.fromStream(users.get().stream());
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

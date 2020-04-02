@@ -49,8 +49,8 @@ public class UserProjector {
     }
 
     @QueryHandler
-    public List<User> getUsers(FindUsersQuery query) {
-        return userRepository.findAll(query.getQueryParams()).block();
+    public List<User> getUsers(FindUsersQuery query) throws ExecutionException, InterruptedException {
+        return userRepository.findAll(query.getQueryParams());
     }
 
     @QueryHandler
