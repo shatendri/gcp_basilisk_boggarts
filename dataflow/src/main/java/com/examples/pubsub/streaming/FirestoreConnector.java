@@ -2,12 +2,10 @@ package com.examples.pubsub.streaming;
 
 import com.examples.pubsub.streaming.dto.UserDto;
 import com.google.auth.oauth2.ServiceAccountCredentials;
-import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 import org.apache.beam.sdk.transforms.DoFn;
-import org.apache.beam.vendor.grpc.v1p21p0.com.google.gson.Gson;
-import org.apache.beam.vendor.grpc.v1p21p0.com.google.gson.JsonSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +32,9 @@ public class FirestoreConnector extends DoFn<UserDto, String> {
                 .getService();
 
         try {
-            CollectionReference usersCollectionReference = firestore.collection("dataflow");
-            usersCollectionReference.add(c.element());
+            DocumentReference docRef = firestore.collection("Users").document();
+            docRef.set(c.element());
+            LOG.info("Saved to Firestore");
         } catch (Exception e) {
             LOG.error("Failed to save user to Firestore");
             LOG.error(e.getMessage());
