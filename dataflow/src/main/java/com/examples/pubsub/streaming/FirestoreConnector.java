@@ -15,7 +15,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collections;
 
-public class FirestoreConnector extends DoFn<String, String> {
+public class FirestoreConnector extends DoFn<UserDto, String> {
 
     private final static Logger LOG = LoggerFactory.getLogger(JsonToUserDto.class);
 
@@ -32,21 +32,10 @@ public class FirestoreConnector extends DoFn<String, String> {
                         .createScoped(Collections.singletonList("https://www.googleapis.com/auth/cloud-platform")))
                 .build()
                 .getService();
-        String entityJson = c.element();
-        Gson gson = new Gson();
-
-        UserDto userDto = new UserDto();
 
         try {
-            userDto = gson.fromJson(entityJson, UserDto.class);
-        } catch (JsonSyntaxException e) {
-            LOG.error("Cast json to UserDto was failed:" + e.getMessage());
-            e.printStackTrace();
-        }
-
-        try {
-            CollectionReference usersCollectionReference = firestore.collection("users8");
-            usersCollectionReference.add(userDto);
+            CollectionReference usersCollectionReference = firestore.collection("dataflow");
+            usersCollectionReference.add(c.element());
         } catch (Exception e) {
             LOG.error("Failed to save user to Firestore");
             LOG.error(e.getMessage());

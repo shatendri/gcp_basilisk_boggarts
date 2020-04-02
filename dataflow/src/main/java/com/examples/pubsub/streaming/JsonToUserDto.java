@@ -9,7 +9,7 @@ import org.apache.beam.vendor.grpc.v1p21p0.com.google.gson.JsonSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JsonToUserDto extends DoFn<String, String> {
+public class JsonToUserDto extends DoFn<String, UserDto> {
 
     private final static Logger LOG = LoggerFactory.getLogger(JsonToUserDto.class);
 
@@ -28,7 +28,7 @@ public class JsonToUserDto extends DoFn<String, String> {
         }
 
         if (UserDtoValidator.isUserDtoValid(userDto)) {
-            c.output(c.element());
+            c.output(userDto);
         } else {
             LOG.info("UserDto is not valid");
         }

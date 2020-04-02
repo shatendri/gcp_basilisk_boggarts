@@ -39,9 +39,9 @@ public class ValidatorDataFlow {
         PCollection<String> messages = pipeline.apply("GetPubSub", PubsubIO.readStrings()
                 .fromSubscription(subscription));
 
-        PCollection<String> validMessages = messages.apply("FilterValidMessages", ParDo.of(new JsonToUserDto()));
+        PCollection<UserDto> validMessages = messages.apply("FilterValidMessages", ParDo.of(new JsonToUserDto()));
 
-        messages.apply("Write to Firestore", ParDo.of(new FirestoreConnector(options.getKeyFilePath())));
+        validMessages.apply("Write to Firestore", ParDo.of(new FirestoreConnector(options.getKeyFilePath())));
 
         // Write to BigQuery
         //Uncomment after creating BigQuery on GCP
