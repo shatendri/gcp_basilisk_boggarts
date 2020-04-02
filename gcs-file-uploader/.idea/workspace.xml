@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d759c92c-68ca-4700-9ade-922a878fd1b2" name="Default Changelist" comment="" />
+    <list default="true" id="d759c92c-68ca-4700-9ade-922a878fd1b2" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,6 +24,10 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="UPDATE_TYPE" value="MERGE" />
+  </component>
   <component name="MavenImportPreferences">
     <option name="importingSettings">
       <MavenImportingSettings>
@@ -23,6 +36,7 @@
     </option>
   </component>
   <component name="ProjectId" id="1ZcOiRi9MMCN1SEXIRSHKHiri7D" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -31,17 +45,21 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="extract.method.default.visibility" value="private" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/java/com/drohobytskyy/gcs" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="settings.saveactions" />
   </component>
   <component name="RecentsManager">
-    <key name="CreateClassDialog.RecentsKey">
-      <recent name="com.drohobytskyy.gcs.domain" />
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/public" />
+      <recent name="$PROJECT_DIR$/src/main/appengine" />
+      <recent name="$PROJECT_DIR$/src/main/resources/templates" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/.." />
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/src/main/java/com/drohobytskyy/gcs" />
       <recent name="$PROJECT_DIR$/src/main/resources/templates" />
       <recent name="$PROJECT_DIR$/src/main/resources" />
@@ -49,10 +67,8 @@
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.drohobytskyy.gcs.service" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/main/resources/public" />
-      <recent name="$PROJECT_DIR$/src/main/appengine" />
-      <recent name="$PROJECT_DIR$/src/main/resources/templates" />
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.drohobytskyy.gcs.domain" />
     </key>
   </component>
   <component name="RunManager" selected="Application.App">
@@ -126,6 +142,10 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="458" y="205" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1440.900/452.-1080.1920.1080@0.0.1440.900" timestamp="1585152796887" />
+    <state x="338" y="-938" key="CommitChangelistDialog2" timestamp="1585836578010">
+      <screen x="-231" y="-1080" width="1920" height="1080" />
+    </state>
+    <state x="338" y="-938" key="CommitChangelistDialog2/-231.-1080.1920.1080/0.0.1440.900@-231.-1080.1920.1080" timestamp="1585836578010" />
     <state width="1878" height="196" key="GridCell.Tab.0.bottom" timestamp="1585831433122">
       <screen x="-231" y="-1080" width="1920" height="1080" />
     </state>
@@ -217,12 +237,20 @@
     <state x="229" y="89" key="SettingsEditor/0.0.1440.900/452.-1080.1920.1080@0.0.1440.900" timestamp="1585150021852" />
     <state x="757" y="-973" key="SettingsEditor/0.0.1440.900/452.-1080.1920.1080@452.-1080.1920.1080" timestamp="1585309048401" />
     <state x="229" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1585477776508" />
+    <state x="329" y="-800" key="Vcs.Push.Dialog.v2" timestamp="1585836315612">
+      <screen x="-231" y="-1080" width="1920" height="1080" />
+    </state>
+    <state x="329" y="-800" key="Vcs.Push.Dialog.v2/-231.-1080.1920.1080/0.0.1440.900@-231.-1080.1920.1080" timestamp="1585836315612" />
     <state x="376" y="286" key="com.intellij.ide.util.TipDialog" timestamp="1585471921285">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="953" y="-737" key="com.intellij.ide.util.TipDialog/0.0.1440.900/452.-1080.1920.1080@452.-1080.1920.1080" timestamp="1585297727224" />
     <state x="376" y="286" key="com.intellij.ide.util.TipDialog/0.0.1440.900@0.0.1440.900" timestamp="1585471921285" />
     <state x="376" y="284" key="com.intellij.ide.util.TipDialog/0.23.1440.822/452.-1057.1920.1057@0.23.1440.822" timestamp="1585135050701" />
+    <state x="518" y="-616" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1585836288488">
+      <screen x="-231" y="-1080" width="1920" height="1080" />
+    </state>
+    <state x="518" y="-616" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/-231.-1080.1920.1080/0.0.1440.900@-231.-1080.1920.1080" timestamp="1585836288488" />
     <state x="396" y="237" width="864" height="602" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1585576868038">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
