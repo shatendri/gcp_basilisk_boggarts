@@ -19,8 +19,8 @@ logging:
 okta:
   oauth2:
     issuer: https://dev-795162.okta.com/oauth2/default
-    client-id:
-    client-secret:
+    client-id: client-id
+    client-secret: client-secret
     token-path: /v1/token
     token-redirect-uri: https://reactive-rest-api-dot-gcp-trainings-272313.appspot.com/authorization-code/callback
     authorize-path: /v1/authorize

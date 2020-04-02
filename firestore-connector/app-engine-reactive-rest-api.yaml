@@ -1,8 +1,8 @@
 runtime: custom
 env: flex
+service: reactive-rest-api
 handlers:
   - url: /.*
     script: this field is required, but ignored
 manual_scaling:
   instances: 1
-service: reactive-rest-api
