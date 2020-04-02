@@ -3,7 +3,6 @@ package com.example.connector.controller;
 import com.example.connector.auth.client.AuthClient;
 import com.example.connector.auth.domain.OktaAuthorizationUrlResponse;
 import com.example.connector.auth.domain.OktaOAuth2TokenResponse;
-import java.security.Principal;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,11 +20,9 @@ public class AuthController {
     this.oktaAuthClient = oktaAuthClient;
   }
 
-  //  @PreAuthorize("hasAuthority('test')")
   @GetMapping("/authorization-code/callback")
   public Mono<OktaOAuth2TokenResponse> getOktaOAuth2Token(
-      @RequestParam String code,
-      Principal principal
+      @RequestParam String code
   ) throws Exception {
 
     OktaOAuth2TokenResponse token =
@@ -35,7 +32,7 @@ public class AuthController {
   }
 
   @GetMapping("/authorization-url")
-  public Mono<OktaAuthorizationUrlResponse> getAuthorizationUrl(Principal principal) {
+  public Mono<OktaAuthorizationUrlResponse> getAuthorizationUrl() {
     return Mono.justOrEmpty(oktaAuthClient.buildAuthorizationUrl());
   }
 }
