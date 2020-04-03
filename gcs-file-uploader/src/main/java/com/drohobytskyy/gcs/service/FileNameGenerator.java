@@ -14,9 +14,9 @@ public class FileNameGenerator {
 
     public String generateFileName() {
         log.info("Generating a name for a file which was downloaded from Mockaroo.");
-        Date date = Calendar.getInstance().getTime();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-M-dd_hh:mm:ss");
-        String strDate = dateFormat.format(date);
+        final Date date = Calendar.getInstance().getTime();
+        final DateFormat dateFormat = new SimpleDateFormat("yyyy-M-dd_hh:mm:ss");
+        final String strDate = dateFormat.format(date);
         return "Mockaroo_"
           .concat(strDate)
           .concat("_") // smile

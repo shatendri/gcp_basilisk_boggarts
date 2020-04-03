@@ -20,19 +20,19 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class MockarooReader {
 
     public static final String KEY = "key";
-    HttpClient httpClient;
-    MockarooParamsContainer mockarooParamsContainer;
+    private final HttpClient httpClient;
+    private final MockarooParamsContainer mockarooParamsContainer;
 
     @Autowired
-    public MockarooReader(HttpClient httpClient,
-      MockarooParamsContainer mockarooParamsContainer) {
+    public MockarooReader(final HttpClient httpClient,
+      final MockarooParamsContainer mockarooParamsContainer) {
         this.httpClient = httpClient;
         this.mockarooParamsContainer = mockarooParamsContainer;
     }
 
     public Optional<byte[]> downloadFileFromMockaroo() {
         log.info("Creating an Http Request.");
-        HttpRequest request =
+        final HttpRequest request =
           HttpRequest.newBuilder()
             .GET()
             .uri(URI.create(buildUrlWithParams(mockarooParamsContainer)))
@@ -44,9 +44,8 @@ public class MockarooReader {
         HttpResponse<byte[]> response = null;
         try {
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
-        } catch (IOException | InterruptedException e) {
-            log.error("An error occurred while reading file from Mockaroo");
-            e.printStackTrace();
+        } catch (final IOException | InterruptedException e) {
+            log.error("An error occurred while reading file from Mockaroo", e);
         }
 
         if (Objects.nonNull(response)) {
