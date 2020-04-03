@@ -1,16 +1,21 @@
 package com.drohobytskyy.gcs.service;
 
-import java.util.Map;
-
 public interface CarrierService {
 
-    Map<String, Object> homePage(final Map<String, Object> model);
+  boolean isEnabled();
 
-    String processRequest();
+  Integer getProcessingInterval();
 
-    Map<String, Object> processButtonPush(
-      final boolean isSupposedToWork,
-      final int supposedInterval,
-      final Map<String, Object> model);
+  String getMockarooUrl();
 
+  String getMockarooKey();
+
+  void fetchAndUploadFileToBucket(String url, String key);
+
+  void reLaunchProcessor(
+      final String url,
+      final String key,
+      final boolean enabled,
+      final int processingInterval
+  );
 }

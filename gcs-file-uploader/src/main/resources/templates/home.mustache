@@ -15,12 +15,25 @@
         <table>
           <tr>
             <td><label>Count of seconds between attempts [1-100] :</label></td>
-            <td><input type="number" name="supposedInterval" placeholder="seconds" min="3" max="30">
+            <td><input type="number" name="processingInterval" placeholder="seconds" min="3" max="30" value="{{processingInterval}}">
             </td>
           </tr>
           <tr>
-            <td><label>Is application supposed to work? true/false</label></td>
-            <td><input type=text name="isSupposedToWork"></td>
+            <td><label>Is application supposed to work?</label></td>
+            <td>
+              <select name="enabled">
+                <option value="true" {{#isEnabled}}selected{{/isEnabled}}>Enabled</option>
+                <option value="false" {{^isEnabled}}selected{{/isEnabled}}>Disabled</option>
+              <select>
+            </td>
+          </tr>
+          <tr>
+             <td><label>Mocakaroo URL</label></td>
+             <td><input type="text" name="mocakarooUrl" value="{{mockarooUrl}}"/></td>
+          </tr>
+          <tr>
+              <td><label>Mocakaroo key</label></td>
+              <td><input type="text" name="mocakarooKey" value="{{mockarooKey}}"/></td>
           </tr>
           <tr>
             <td colspan="2" align="center">
@@ -33,14 +46,14 @@
     </div>
     <div>
 
-      {{#isRunning}}
+      {{#isEnabled}}
         <div>
           <b>Status: </b>
-          <font color="green">The file is uploaded every {{interval}} seconds.</font>
+          <font color="green">The file is uploaded every {{processingInterval}} seconds.</font>
         </div>
-      {{/isRunning}}
+      {{/isEnabled}}
 
-      {{^isRunning}}
+      {{^isEnabled}}
         <div>
           <b>Status: </b>
           <font color="red">The app is napping right now.</font>
@@ -50,14 +63,12 @@
           Invalid input:
           {{errors}} <br>
         {{/errors}}
-      {{/isRunning}}
-
+      {{/isEnabled}}
 
       {{#errors}}
         Invalid input:
         {{errors}} <br>
       {{/errors}}
-
     </div>
   </div>
 </div>
@@ -78,7 +89,6 @@
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
-
 
 </style>
 </html>

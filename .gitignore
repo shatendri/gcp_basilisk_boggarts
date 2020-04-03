@@ -42,4 +42,4 @@ gcp-credentials.json
 *.idea
 
 # DS_Store
-*.DS_Store
+.DS_Store
