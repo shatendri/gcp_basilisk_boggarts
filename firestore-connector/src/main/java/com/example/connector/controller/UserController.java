@@ -3,7 +3,8 @@ package com.example.connector.controller;
 import com.example.connector.axon.command.AddUserCommand;
 import com.example.connector.axon.command.DeleteUserCommand;
 import com.example.connector.axon.command.UpdateUserCommand;
-import com.example.connector.axon.coreapi.query.FindAllUsersFromBigQuery;
+import com.example.connector.axon.query.FindAllUsersFromBigQuery;
+import com.example.connector.axon.query.FindUserQuery;
 import com.example.connector.axon.query.FindUsersQuery;
 import com.example.connector.domain.User;
 import org.apache.commons.beanutils.BeanUtils;
@@ -41,6 +42,14 @@ public class UserController {
         return Flux.fromStream(query.get().stream());
     }
 
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, path = "/{id}")
+    public Mono<User> getUser(@PathVariable String id) throws ExecutionException, InterruptedException {
+        FindUserQuery findUserQuery = new FindUserQuery(id);
+        CompletableFuture<User> query = queryGateway.query(
+                findUserQuery, ResponseTypes.instanceOf(User.class));
+        return Mono.just(query.get());
+    }
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, path = "/bigquery")
     public Flux<User> getUsersFromBigQuery() throws ExecutionException, InterruptedException {
         CompletableFuture<List<User>> users = queryGateway.query(
@@ -57,7 +66,7 @@ public class UserController {
         return Mono.just(user);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "/{id}")
     public Mono<User> updateUser(@PathVariable String id, @RequestBody User user) throws InvocationTargetException, IllegalAccessException {
         user.setId(id);
         UpdateUserCommand updateUserCommand = new UpdateUserCommand();
