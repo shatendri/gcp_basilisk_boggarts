@@ -7,7 +7,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -29,7 +28,7 @@ public class CarrierServiceImpl implements CarrierService {
   private static AtomicInteger PROCESSING_INTERVAL = new AtomicInteger(30);
 
   private static AtomicReference<String> MOCKAROO_URL =
-      new AtomicReference<>("https://my.api.mockaroo.com/gcs.json");
+      new AtomicReference<>("https://my.api.mockaroo.com/gcs.csv");
   private static AtomicReference<String> MOCKAROO_KEY =
       new AtomicReference<>("f474aa20");
 
@@ -63,16 +62,11 @@ public class CarrierServiceImpl implements CarrierService {
 
   @Override
   public void fetchAndUploadFileToBucket(String url, String key) {
-    if (StringUtils.isEmpty(url) || StringUtils.isEmpty(key)) {
-      url = MOCKAROO_URL.get();
-      key = MOCKAROO_KEY.get();
-    } else {
-      MOCKAROO_URL.set(url);
-      MOCKAROO_KEY.set(key);
-    }
+    setMockarooConfig(url, key);
 
     try {
-      final byte[] mockarooFileContent = mockarooClient.loadFile(url, key);
+      final byte[] mockarooFileContent =
+          mockarooClient.loadFile(MOCKAROO_URL.get(), MOCKAROO_KEY.get());
       cloudStorageService.store(mockarooFileContent, buildFileName());
     } catch (Exception e) {
       log.error("Cannot fetch and/or store file to storage", e);
@@ -86,6 +80,8 @@ public class CarrierServiceImpl implements CarrierService {
       final boolean enabled,
       final int processingInterval
   ) {
+    setMockarooConfig(url, key);
+
     // Turning OFF app
     if (!enabled) {
       ENABLED.set(false);
@@ -95,23 +91,24 @@ public class CarrierServiceImpl implements CarrierService {
       if (!ENABLED.get()) {
         // running new Timer
         ENABLED.set(true);
-        startProcessorTimer(url, key);
+        startProcessorTimer();
       }
     }
   }
 
-  private void startProcessorTimer(final String url, final String key) {
+  private void startProcessorTimer() {
     new Timer().schedule(
         new TimerTask() {
           @Override
           public void run() {
             while (ENABLED.get()) {
-              log.info("------------- " + "Task performed on " + new Date() + "  -------------");
-              fetchAndUploadFileToBucket(url, key);
+              log.info("----------- " + "Task performed on " + new Date() + "  -----------");
+              fetchAndUploadFileToBucket(MOCKAROO_URL.get(), MOCKAROO_KEY.get());
+              log.info("------------------------------------------------------------------------");
               try {
                 Thread.sleep(PROCESSING_INTERVAL.get() * MILLISECONDS_IN_SECOND);
               } catch (final InterruptedException e) {
-                log.error("An error occurred while tying to sleep.", e);
+                log.error("An error occurred while tying to sleep", e);
               }
             }
           }
@@ -122,9 +119,14 @@ public class CarrierServiceImpl implements CarrierService {
 
   private String buildFileName() {
     final String dateAsString =
-        LocalDateTime.now()
-            .format(DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
+    return String.format("mockaroo_%s.csv", dateAsString.replaceAll("[.:-]+", "_"));
+  }
 
-    return String.format("Mockaroo_%s_%s.csv", dateAsString, UUID.randomUUID().toString());
+  private void setMockarooConfig(String url, String key) {
+    if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(key)) {
+      MOCKAROO_URL.set(url);
+      MOCKAROO_KEY.set(key);
+    }
   }
 }

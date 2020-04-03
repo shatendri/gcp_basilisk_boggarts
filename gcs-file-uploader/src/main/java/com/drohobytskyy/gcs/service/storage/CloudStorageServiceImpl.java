@@ -26,7 +26,7 @@ public class CloudStorageServiceImpl implements CloudStorageService {
   }
 
   public void store(final byte[] data, final String fileName) {
-    log.info("Started file {} uploading data to Cloud Storage", fileName);
+    log.info("Started {} file uploading to Cloud Storage", fileName);
 
     final BlobId blobId = BlobId.of(bucketName, fileName);
     final BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
