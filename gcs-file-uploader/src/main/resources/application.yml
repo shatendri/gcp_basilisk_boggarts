@@ -1,17 +1,11 @@
 server:
   port: 8080
-
 spring:
   cloud:
     gcp:
-#            credentials:
-#              location: classpath:/gcp-credentials.json
       storage:
         bucket: "gcp-csv-files-bucket"
   mustache:
     suffix: .mustache
-
 mockaroo:
-  url: https://my.api.mockaroo.com/gcs.json
-  key: f474aa20
   timeout: 10

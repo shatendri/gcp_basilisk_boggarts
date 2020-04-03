@@ -1,99 +1,130 @@
 package com.drohobytskyy.gcs.service;
 
+import com.drohobytskyy.gcs.mockaroo.client.MockarooClient;
+import com.drohobytskyy.gcs.service.storage.CloudStorageService;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
 public class CarrierServiceImpl implements CarrierService {
 
-    public static final int MILLISECONDS_IN_SECOND = 1000;
-    public static final int DELAY_BEFORE_START = 3000;
-    private final MockarooReader mockarooReader;
-    private final FileNameGenerator fileNameGenerator;
-    private final CloudStorageReader storageReader;
-    private final CloudStorageWriter storageWriter;
-    private volatile boolean isRunning = false;
-    private volatile int interval;
+  public static final int MILLISECONDS_IN_SECOND = 1000;
+  public static final int DELAY_BEFORE_START = 3000;
 
-    @Autowired
-    public CarrierServiceImpl(
-      final MockarooReader mockarooReader,
-      final FileNameGenerator fileNameGenerator,
-      final CloudStorageReader storageReader,
-      final CloudStorageWriter storageWriter) {
-        this.mockarooReader = mockarooReader;
-        this.fileNameGenerator = fileNameGenerator;
-        this.storageReader = storageReader;
-        this.storageWriter = storageWriter;
+  private final MockarooClient mockarooClient;
+  private final CloudStorageService cloudStorageService;
+
+  private static AtomicBoolean ENABLED = new AtomicBoolean(false);
+  private static AtomicInteger PROCESSING_INTERVAL = new AtomicInteger(30);
+
+  private static AtomicReference<String> MOCKAROO_URL =
+      new AtomicReference<>("https://my.api.mockaroo.com/gcs.json");
+  private static AtomicReference<String> MOCKAROO_KEY =
+      new AtomicReference<>("f474aa20");
+
+  public CarrierServiceImpl(
+      final MockarooClient mockarooClient,
+      final CloudStorageService cloudStorageService
+  ) {
+    this.mockarooClient = mockarooClient;
+    this.cloudStorageService = cloudStorageService;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return ENABLED.get();
+  }
+
+  @Override
+  public Integer getProcessingInterval() {
+    return PROCESSING_INTERVAL.get();
+  }
+
+  @Override
+  public String getMockarooUrl() {
+    return MOCKAROO_URL.get();
+  }
+
+  @Override
+  public String getMockarooKey() {
+    return MOCKAROO_KEY.get();
+  }
+
+  @Override
+  public void fetchAndUploadFileToBucket(String url, String key) {
+    if (StringUtils.isEmpty(url) || StringUtils.isEmpty(key)) {
+      url = MOCKAROO_URL.get();
+      key = MOCKAROO_KEY.get();
+    } else {
+      MOCKAROO_URL.set(url);
+      MOCKAROO_KEY.set(key);
     }
 
-    @Override
-    public Map<String, Object> homePage(final Map<String, Object> model) {
-        if (isRunning) {
-            model.put("isRunning", true);
-        }
-        return model;
+    try {
+      final byte[] mockarooFileContent = mockarooClient.loadFile(url, key);
+      cloudStorageService.store(mockarooFileContent, buildFileName());
+    } catch (Exception e) {
+      log.error("Cannot fetch and/or store file to storage", e);
     }
+  }
 
-    @Override
-    public Map<String, Object> processButtonPush(
-      final boolean isSupposedToWork,
-      final int supposedInterval,
-      final Map<String, Object> model) {
-
-        model.remove("errors");
-
-        // Turning OFF app
-        if (!isSupposedToWork) {
-            isRunning = false;
-        } else {
-            // Turning ON app
-            interval = supposedInterval;
-            model.put("interval", interval);
-            if (!isRunning) {
-                // running new Timer
-                isRunning = true;
-                processRequestInLoop();
-            }
-        }
-        model.put("isRunning", isRunning);
-        return model;
+  @Override
+  public void reLaunchProcessor(
+      final String url,
+      final String key,
+      final boolean enabled,
+      final int processingInterval
+  ) {
+    // Turning OFF app
+    if (!enabled) {
+      ENABLED.set(false);
+    } else {
+      // Turning ON app
+      PROCESSING_INTERVAL.set(processingInterval);
+      if (!ENABLED.get()) {
+        // running new Timer
+        ENABLED.set(true);
+        startProcessorTimer(url, key);
+      }
     }
+  }
 
-    @Override
-    public String processRequest() {
-        final Optional<byte[]> dataFromMockaroo = mockarooReader.downloadFileFromMockaroo();
-        final String filename = fileNameGenerator.generateFileName();
-        storageWriter.writeFileToGCS(dataFromMockaroo, filename);
-
-        return storageReader.readFileFromGCS(filename);
-    }
-
-    private void processRequestInLoop() {
-        new Timer().schedule(
-          new TimerTask() {
-              @Override
-              public void run() {
-                  while (isRunning) {
-                      log.info("------------- " + "Task performed on " + new Date() + "  -------------");
-                      processRequest();
-                      try {
-                          Thread.sleep(interval * MILLISECONDS_IN_SECOND);
-                      } catch (final InterruptedException e) {
-                          log.error("An error occurred while tying to sleep.", e);
-                      }
-                  }
+  private void startProcessorTimer(final String url, final String key) {
+    new Timer().schedule(
+        new TimerTask() {
+          @Override
+          public void run() {
+            while (ENABLED.get()) {
+              log.info("------------- " + "Task performed on " + new Date() + "  -------------");
+              fetchAndUploadFileToBucket(url, key);
+              try {
+                Thread.sleep(PROCESSING_INTERVAL.get() * MILLISECONDS_IN_SECOND);
+              } catch (final InterruptedException e) {
+                log.error("An error occurred while tying to sleep.", e);
               }
-          },
-          DELAY_BEFORE_START
-        );
-    }
+            }
+          }
+        },
+        DELAY_BEFORE_START
+    );
+  }
 
+  private String buildFileName() {
+    final String dateAsString =
+        LocalDateTime.now()
+            .format(DateTimeFormatter.ISO_LOCAL_DATE);
+
+    return String.format("Mockaroo_%s_%s.csv", dateAsString, UUID.randomUUID().toString());
+  }
 }
