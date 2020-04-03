@@ -12,7 +12,10 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 public class CarrierController {
 
-    final private CarrierService carrier;
+    public static final String FIELD_NAME_SUPPOSED_INTERVAL = "supposedInterval";
+    public static final int MIN_INTERVAL = 1;
+    public static final int MAX_INTERVAL = 100;
+    private final CarrierService carrier;
 
     @Autowired
     public CarrierController(final CarrierService carrier) {
@@ -26,10 +29,15 @@ public class CarrierController {
 
     @RequestMapping(path = "/", method = RequestMethod.POST)
     public ModelAndView buttonPush(
-      @RequestParam(defaultValue = "false") final String isSupposedToWork,
-      @RequestParam(defaultValue = "0") final String supposedInterval,
+      @RequestParam(defaultValue = "false") final boolean isSupposedToWork,
+      @RequestParam(defaultValue = "0") final int supposedInterval,
       final Map<String, Object> model) {
-        return new ModelAndView("home", carrier.processButtonPush(isSupposedToWork, supposedInterval, model));
+        if (supposedInterval >= MIN_INTERVAL && supposedInterval <= MAX_INTERVAL) {
+            return new ModelAndView("home", carrier.processButtonPush(isSupposedToWork, supposedInterval, model));
+        } else {
+            model.put("errors", FIELD_NAME_SUPPOSED_INTERVAL);
+            return new ModelAndView("home", model);
+        }
     }
 
     // curl -X POST http://localhost:5757/gcs

@@ -9,8 +9,8 @@ public interface CarrierService {
     String processRequest();
 
     Map<String, Object> processButtonPush(
-      final String isSupposedToWork,
-      final String supposedInterval,
+      final boolean isSupposedToWork,
+      final int supposedInterval,
       final Map<String, Object> model);
 
 }

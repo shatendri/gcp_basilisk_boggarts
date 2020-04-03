@@ -13,10 +13,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class CloudStorageWriter {
 
+
+    private final Storage storage;
+    private final String bucketName;
+
     @Autowired
-    Storage storage;
-    @Value("${spring.cloud.gcp.storage.bucket}")
-    String bucketName;
+    public CloudStorageWriter(
+      final Storage storage,
+      @Value("${spring.cloud.gcp.storage.bucket}") final String bucketName) {
+        this.storage = storage;
+        this.bucketName = bucketName;
+    }
 
     public void writeFileToGCS(final Optional<byte[]> data, final String filename) {
 
@@ -24,8 +31,8 @@ public class CloudStorageWriter {
           (byteArray)
             -> {
               log.info("Uploading data to Cloud Storage.");
-              BlobId blobId = BlobId.of(bucketName, filename);
-              BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+              final BlobId blobId = BlobId.of(bucketName, filename);
+              final BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
               storage.create(blobInfo, byteArray);
           },
           ()
