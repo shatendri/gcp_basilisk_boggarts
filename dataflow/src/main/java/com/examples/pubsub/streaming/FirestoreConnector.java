@@ -26,10 +26,7 @@ public class FirestoreConnector extends DoFn<UserDto, UserDto> {
 
     @ProcessElement
     public void processElement(ProcessContext c) throws Exception {
-        Firestore firestore = FirestoreOptions.newBuilder()
-                .setCredentials(ServiceAccountCredentials.fromStream(new FileInputStream(filePath))
-                        .createScoped(Collections.singletonList("https://www.googleapis.com/auth/cloud-platform")))
-                .build()
+        Firestore firestore = FirestoreOptions.getDefaultInstance()
                 .getService();
         try {
             DocumentReference docRef = firestore.collection(firestoreCollection).document();

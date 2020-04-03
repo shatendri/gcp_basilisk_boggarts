@@ -9,6 +9,8 @@ import org.apache.beam.vendor.grpc.v1p21p0.com.google.gson.JsonSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.UUID;
+
 public class JsonToUserDto extends DoFn<String, UserDto> {
 
     private final static Logger LOG = LoggerFactory.getLogger(JsonToUserDto.class);
@@ -23,6 +25,7 @@ public class JsonToUserDto extends DoFn<String, UserDto> {
         try {
             userDto = gson.fromJson(entityJson, UserDto.class);
             if (UserDtoValidator.isUserDtoValid(userDto)) {
+                userDto.setId(UUID.randomUUID().toString());
                 c.output(userDto);
             } else {
                 LOG.info("UserDto is not valid");
