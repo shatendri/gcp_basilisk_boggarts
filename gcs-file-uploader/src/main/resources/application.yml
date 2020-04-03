@@ -4,8 +4,8 @@ server:
 spring:
   cloud:
     gcp:
-      #      credentials:
-      #        location: classpath:/gcp-credentials.json
+#            credentials:
+#              location: classpath:/gcp-credentials.json
       storage:
         bucket: "gcp-csv-files-bucket"
   mustache:
