@@ -5,11 +5,20 @@ import java.util.Objects;
 
 public class UserDto implements Serializable {
 
+    private String id;
     private String email;
     private String gender;
     private String ip_address;
     private String first_name;
     private String last_name;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getEmail() {
         return email;
