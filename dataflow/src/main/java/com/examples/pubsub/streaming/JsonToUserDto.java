@@ -2,10 +2,8 @@ package com.examples.pubsub.streaming;
 
 import com.examples.pubsub.streaming.dto.UserDto;
 import com.examples.pubsub.streaming.dto.UserDtoValidator;
-import com.google.protobuf.InvalidProtocolBufferException;
 import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.vendor.grpc.v1p21p0.com.google.gson.Gson;
-import org.apache.beam.vendor.grpc.v1p21p0.com.google.gson.JsonSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
