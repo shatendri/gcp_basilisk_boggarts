@@ -23,6 +23,7 @@ public class CarrierController {
     public static final String FIELD_NAME_PROCESSING_INTERVAL = "processingInterval";
     public static final int MIN_INTERVAL = 1;
     public static final int MAX_INTERVAL = 100;
+    public static final String MOCKAROO_URL_OR_AND_KEY = "Mockaroo URL or/and key";
 
     private final CarrierService carrierService;
     private MockarooClient mockarooClient;
@@ -54,7 +55,7 @@ public class CarrierController {
             errorList.add(FIELD_NAME_PROCESSING_INTERVAL);
         }
         if (!isValidMockarooUrl(mocakarooUrl, mocakarooKey)) {
-            errorList.add("Invalid Mockaroo URL or/and key.");
+            errorList.add(MOCKAROO_URL_OR_AND_KEY);
         }
 
         if (errorList.isEmpty()) {
@@ -98,6 +99,7 @@ public class CarrierController {
             log.error("An error occurred while trying to read data from Mockaroo", e);
             return false;
         }
+        log.info("Successful validation of Mockaroo URL and Key.");
         return true;
     }
 }
