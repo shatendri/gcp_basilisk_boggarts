@@ -20,7 +20,7 @@ public class JsonToUserDto extends DoFn<String, UserDto> {
         String entityJson = c.element();
         Gson gson = new Gson();
 
-        UserDto userDto = new UserDto();
+        UserDto userDto;
 
         try {
             userDto = gson.fromJson(entityJson, UserDto.class);
