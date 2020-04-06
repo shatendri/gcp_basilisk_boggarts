@@ -2,7 +2,6 @@ package com.drohobytskyy.gcs.controller;
 
 import com.drohobytskyy.gcs.mockaroo.client.MockarooClient;
 import com.drohobytskyy.gcs.service.CarrierService;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,14 +26,12 @@ public class CarrierController {
 
     private final CarrierService carrierService;
     private MockarooClient mockarooClient;
-    private List<String> errorList;
 
     public CarrierController(
       final CarrierService carrierService,
       MockarooClient mockarooClient) {
         this.carrierService = carrierService;
         this.mockarooClient = mockarooClient;
-        this.errorList = new LinkedList<>();
     }
 
     @GetMapping
@@ -51,14 +48,20 @@ public class CarrierController {
       @RequestParam final String mocakarooKey,
       final Map<String, Object> model
     ) {
-        errorList = new LinkedList<>();
+        List<String> errorList = new LinkedList<>();
+
         if (!(processingInterval >= MIN_INTERVAL && processingInterval <= MAX_INTERVAL)) {
             errorList.add(FIELD_NAME_PROCESSING_INTERVAL);
-        } else if (isValidMockarooUrl(mocakarooUrl, mocakarooKey)) {
-            model.remove("errors");
+        }
+        if (!isValidMockarooUrl(mocakarooUrl, mocakarooKey)) {
+            errorList.add("Invalid Mockaroo URL or/and key.");
+        }
+
+        if (errorList.isEmpty()) {
             carrierService.reLaunchProcessor(mocakarooUrl, mocakarooKey, enabled, processingInterval);
         }
-        fillModel(model);
+        fillModel(model, errorList);
+
         return new ModelAndView("home", model);
     }
 
@@ -79,9 +82,11 @@ public class CarrierController {
         model.put("processingInterval", carrierService.getProcessingInterval());
         model.put("minInterval", MIN_INTERVAL);
         model.put("maxInterval", MAX_INTERVAL);
-//        if (errorList.size() > 0) {
+    }
+
+    private void fillModel(Map<String, Object> model, final List<String> errorList) {
+        fillModel(model);
         model.put("errors", errorList);
-//        }
     }
 
     private boolean isValidMockarooUrl(String mocakarooUrl, String mocakarooKey) {
@@ -89,20 +94,10 @@ public class CarrierController {
         try {
             final byte[] mockarooFileContent =
               mockarooClient.loadFile(mocakarooUrl, mocakarooKey);
-            if (mockarooFileContent.length > 0) {
-                if (new String(mockarooFileContent).contains("\"error\":")) {
-                    errorList.add("API Key error");
-                    log.error("An error connected to the API Key occurred.");
-                    return false;
-                } else {
-                    log.error("Successful URL validation.");
-                    return true;
-                }
-            }
-        } catch (IOException | InterruptedException e) {
+        } catch (Throwable e) {
             log.error("An error occurred while trying to read data from Mockaroo", e);
+            return false;
         }
-        errorList.add("URL");
-        return false;
+        return true;
     }
 }

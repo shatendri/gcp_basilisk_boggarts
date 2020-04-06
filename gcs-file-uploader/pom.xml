@@ -14,7 +14,7 @@
             <plugin>
                 <artifactId>appengine-maven-plugin</artifactId>
                 <configuration>
-                    <!--          <deploy.projectId>drohobytskyy-test-project</deploy.projectId>-->
+                    <!--                    <deploy.projectId>drohobytskyy-test-project</deploy.projectId>-->
                     <deploy.projectId>gcp-trainings-272313</deploy.projectId>
                     <deploy.version>v1</deploy.version>
                 </configuration>

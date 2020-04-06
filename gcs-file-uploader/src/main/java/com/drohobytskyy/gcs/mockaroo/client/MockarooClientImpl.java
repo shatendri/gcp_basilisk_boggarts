@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
@@ -61,8 +62,8 @@ public class MockarooClientImpl implements MockarooClient {
     private void handleHttpErrors(final HttpResponse response) {
         final HttpStatus httpStatus = HttpStatus.valueOf(response.statusCode());
         if (!httpStatus.is2xxSuccessful()) {
-//      throw new HttpClientErrorException(httpStatus, response.body().toString());
-            log.error("HttpClientErrorException", response.body().toString());
+            throw new HttpClientErrorException(httpStatus, response.body().toString());
+//            log.error("HttpClientErrorException", response.body().toString());
         }
     }
 }
