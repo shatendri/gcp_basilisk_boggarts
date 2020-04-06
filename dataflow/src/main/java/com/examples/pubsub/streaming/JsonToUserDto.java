@@ -26,7 +26,7 @@ public class JsonToUserDto extends DoFn<String, UserDto> {
                 userDto.setId(UUID.randomUUID().toString());
                 c.output(userDto);
             } else {
-                LOG.info("UserDto is not valid");
+                LOG.info(userDto.toString() + " is not valid");
             }
         } catch (Exception e) {
             LOG.info("Cast json to UserDto was failed:" + e.getMessage());
