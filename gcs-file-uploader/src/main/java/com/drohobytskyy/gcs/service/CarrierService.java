@@ -2,20 +2,20 @@ package com.drohobytskyy.gcs.service;
 
 public interface CarrierService {
 
-  boolean isEnabled();
+    boolean isEnabled();
 
-  Integer getProcessingInterval();
+    Integer getProcessingInterval();
 
-  String getMockarooUrl();
+    String getMockarooUrl();
 
-  String getMockarooKey();
+    String getMockarooKey();
 
-  void fetchAndUploadFileToBucket(String url, String key);
+    void fetchAndUploadFileToBucket(String url, String key);
 
-  void reLaunchProcessor(
+    void reLaunchProcessor(
       final String url,
       final String key,
       final boolean enabled,
       final int processingInterval
-  );
+    );
 }

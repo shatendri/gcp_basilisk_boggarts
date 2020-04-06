@@ -12,58 +12,57 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Service
 public class MockarooClientImpl implements MockarooClient {
 
-  private static final String KEY = "key";
+    private static final String KEY = "key";
 
-  private final HttpClient httpClient;
-  private final Integer timeout;
+    private final HttpClient httpClient;
+    private final Integer timeout;
 
-  public MockarooClientImpl(
+    public MockarooClientImpl(
       final HttpClient mockarooHttpClient,
       @Value("${mockaroo.timeout}") final Integer timeout
-  ) {
-    this.httpClient = mockarooHttpClient;
-    this.timeout = timeout;
-  }
+    ) {
+        this.httpClient = mockarooHttpClient;
+        this.timeout = timeout;
+    }
 
-  @Override
-  public byte[] loadFile(String url, String key) throws IOException, InterruptedException {
+    @Override
+    public byte[] loadFile(String url, String key) throws IOException, InterruptedException {
 
-    final URI uri =
-        UriComponentsBuilder.fromHttpUrl(url)
+        final URI uri =
+          UriComponentsBuilder.fromHttpUrl(url)
             .queryParam(KEY, key)
             .build()
             .toUri();
 
-    final HttpRequest request =
-        HttpRequest.newBuilder()
+        final HttpRequest request =
+          HttpRequest.newBuilder()
             .GET()
             .uri(uri)
             .header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
             .timeout(Duration.ofSeconds(timeout))
             .build();
 
-    final HttpResponse<byte[]> response =
-        httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
+        final HttpResponse<byte[]> response =
+          httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
 
-    log.debug("Request: {}\nStatus code: {}", response.request().toString(), response.statusCode());
+        log.debug("Request: {}\nStatus code: {}", response.request().toString(), response.statusCode());
 
-    handleHttpErrors(response);
+        handleHttpErrors(response);
 
-    return response.body();
-  }
-
-  private void handleHttpErrors(final HttpResponse response) {
-    final HttpStatus httpStatus = HttpStatus.valueOf(response.statusCode());
-    if (!httpStatus.is2xxSuccessful()) {
-//      throw new HttpClientErrorException(httpStatus, response.body().toString());
-      log.error("HttpClientErrorException", response.body().toString());
+        return response.body();
     }
-  }
+
+    private void handleHttpErrors(final HttpResponse response) {
+        final HttpStatus httpStatus = HttpStatus.valueOf(response.statusCode());
+        if (!httpStatus.is2xxSuccessful()) {
+//      throw new HttpClientErrorException(httpStatus, response.body().toString());
+            log.error("HttpClientErrorException", response.body().toString());
+        }
+    }
 }

@@ -9,7 +9,7 @@ public class UserDtoValidator {
 
     private final static Logger LOG = LoggerFactory.getLogger(UserDtoValidator.class);
 
-    private static final String EMAIL_PATTERN = "^[(a-zA-Z-0-9-\\_\\+\\.)]+@[(a-z-A-z)]+\\.[(a-zA-z)]{2,3}$";
+    private static final String EMAIL_PATTERN = "^[(a-zA-Z0-9-\\_\\+\\.)]+@[(a-z-A-z)]+\\.[(a-zA-z)]{2,3}$";
     private static final String NAME_PATTERN = "[A-Z][a-z]*";
     private static final String IP_PATTERN = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
             "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
