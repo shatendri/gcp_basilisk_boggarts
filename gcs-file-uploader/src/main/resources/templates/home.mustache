@@ -15,7 +15,7 @@
         <table>
           <tr>
             <td><label>Count of seconds between attempts [1-100] :</label></td>
-            <td><input type="number" name="processingInterval" placeholder="seconds" min="3" max="30" value="{{processingInterval}}">
+            <td><input type="number" name="processingInterval" placeholder="seconds" min="{{minInterval}}" max="{{maxInterval}}" value="{{processingInterval}}">
             </td>
           </tr>
           <tr>
@@ -24,7 +24,7 @@
               <select name="enabled">
                 <option value="true" {{#isEnabled}}selected{{/isEnabled}}>Enabled</option>
                 <option value="false" {{^isEnabled}}selected{{/isEnabled}}>Disabled</option>
-              <select>
+              </select>
             </td>
           </tr>
           <tr>
@@ -52,22 +52,17 @@
           <font color="green">The file is uploaded every {{processingInterval}} seconds.</font>
         </div>
       {{/isEnabled}}
-
       {{^isEnabled}}
         <div>
           <b>Status: </b>
-          <font color="red">The app is napping right now.</font>
+          <font color="orange">The app is napping right now.</font>
         </div>
-
-        {{#errors}}
-          Invalid input:
-          {{errors}} <br>
-        {{/errors}}
       {{/isEnabled}}
+      <br><br>
 
       {{#errors}}
-        Invalid input:
-        {{errors}} <br>
+        <b>Invalid input:</b>
+        <font color="red">{{errors}} <br></font>
       {{/errors}}
     </div>
   </div>

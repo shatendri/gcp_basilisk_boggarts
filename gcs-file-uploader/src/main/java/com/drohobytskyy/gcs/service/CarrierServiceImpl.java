@@ -120,7 +120,7 @@ public class CarrierServiceImpl implements CarrierService {
   private String buildFileName() {
     final String dateAsString =
         LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
-    return String.format("mockaroo_%s.csv", dateAsString.replaceAll("[.:-]+", "_"));
+    return String.format("mockaroo_%s.csv", dateAsString.replaceAll("[.:-]+", "_").replaceAll("[T]", "_time_"));
   }
 
   private void setMockarooConfig(String url, String key) {
