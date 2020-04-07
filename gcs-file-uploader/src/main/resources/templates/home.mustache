@@ -30,11 +30,17 @@
           </tr>
           <tr>
             <td><label>Mocakaroo URL</label></td>
-            <td><input type="text" name="mocakarooUrl" value="{{mockarooUrl}}"/></td>
+            <td><input type="text" name="mockarooUrl" value="{{mockarooUrl}}"/></td>
           </tr>
           <tr>
             <td><label>Mocakaroo key</label></td>
-            <td><input type="text" name="mocakarooKey" value="{{mockarooKey}}"/></td>
+            <td><input type="text" name="mockarooKey" value="{{mockarooKey}}"/></td>
+          </tr>
+          <tr>
+            <td><label>Count of rows to be generated [1-1000] :</label></td>
+            <td><input type="number" name="mockarooRows" placeholder="rows"
+                       min="{{minRows}}" max="{{maxRows}}" value= {{mockarooRows}}>
+            </td>
           </tr>
           <tr>
             <td colspan="2" align="center">
@@ -85,5 +91,6 @@
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
+
 </style>
 </html>

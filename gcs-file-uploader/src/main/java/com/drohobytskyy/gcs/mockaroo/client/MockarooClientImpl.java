@@ -20,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class MockarooClientImpl implements MockarooClient {
 
     private static final String KEY = "key";
+    private static final String COUNT_OF_ROWS = "countOfRows";
 
     private final HttpClient httpClient;
     private final Integer timeout;
@@ -33,11 +34,12 @@ public class MockarooClientImpl implements MockarooClient {
     }
 
     @Override
-    public byte[] loadFile(String url, String key) throws IOException, InterruptedException {
+    public byte[] loadFile(String url, String key, int countOfRows) throws IOException, InterruptedException {
 
         final URI uri =
           UriComponentsBuilder.fromHttpUrl(url)
             .queryParam(KEY, key)
+            .queryParam(COUNT_OF_ROWS, countOfRows)
             .build()
             .toUri();
 
@@ -63,7 +65,6 @@ public class MockarooClientImpl implements MockarooClient {
         final HttpStatus httpStatus = HttpStatus.valueOf(response.statusCode());
         if (!httpStatus.is2xxSuccessful()) {
             throw new HttpClientErrorException(httpStatus, response.body().toString());
-//            log.error("HttpClientErrorException", response.body().toString());
         }
     }
 }

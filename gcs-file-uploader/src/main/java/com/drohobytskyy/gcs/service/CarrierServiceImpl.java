@@ -26,6 +26,7 @@ public class CarrierServiceImpl implements CarrierService {
       new AtomicReference<>("https://my.api.mockaroo.com/gcs.csv");
     private static AtomicReference<String> MOCKAROO_KEY =
       new AtomicReference<>("f474aa20");
+    private static AtomicInteger MOCKAROO_ROWS = new AtomicInteger(100);
     private final MockarooClient mockarooClient;
     private final CloudStorageService cloudStorageService;
 
@@ -48,6 +49,11 @@ public class CarrierServiceImpl implements CarrierService {
     }
 
     @Override
+    public Integer getMockarooRows() {
+        return MOCKAROO_ROWS.get();
+    }
+
+    @Override
     public String getMockarooUrl() {
         return MOCKAROO_URL.get();
     }
@@ -58,12 +64,12 @@ public class CarrierServiceImpl implements CarrierService {
     }
 
     @Override
-    public void fetchAndUploadFileToBucket(String url, String key) {
-        setMockarooConfig(url, key);
+    public void fetchAndUploadFileToBucket(String url, String key, int countOfRaws) {
+        setMockarooConfig(url, key, countOfRaws);
 
         try {
             final byte[] mockarooFileContent =
-              mockarooClient.loadFile(MOCKAROO_URL.get(), MOCKAROO_KEY.get());
+              mockarooClient.loadFile(MOCKAROO_URL.get(), MOCKAROO_KEY.get(), MOCKAROO_ROWS.get());
             cloudStorageService.store(mockarooFileContent, buildFileName());
         } catch (Exception e) {
             log.error("Cannot fetch and/or store file to storage", e);
@@ -74,15 +80,15 @@ public class CarrierServiceImpl implements CarrierService {
     public void reLaunchProcessor(
       final String url,
       final String key,
+      final int countOfRows,
       final boolean enabled,
       final int processingInterval
     ) {
-        setMockarooConfig(url, key);
-
         // Turning OFF app
         if (!enabled) {
             ENABLED.set(false);
         } else {
+            setMockarooConfig(url, key, countOfRows);
             // Turning ON app
             PROCESSING_INTERVAL.set(processingInterval);
             if (!ENABLED.get()) {
@@ -100,7 +106,7 @@ public class CarrierServiceImpl implements CarrierService {
               public void run() {
                   while (ENABLED.get()) {
                       log.info("----------- " + "Task performed on " + new Date() + "  -----------");
-                      fetchAndUploadFileToBucket(MOCKAROO_URL.get(), MOCKAROO_KEY.get());
+                      fetchAndUploadFileToBucket(MOCKAROO_URL.get(), MOCKAROO_KEY.get(), MOCKAROO_ROWS.get());
                       log.info("------------------------------------------------------------------------");
                       try {
                           Thread.sleep(PROCESSING_INTERVAL.get() * MILLISECONDS_IN_SECOND);
@@ -120,10 +126,11 @@ public class CarrierServiceImpl implements CarrierService {
         return String.format("mockaroo_%s.csv", dateAsString.replaceAll("[.:-]+", "_").replaceAll("[T]", "_time_"));
     }
 
-    private void setMockarooConfig(String url, String key) {
+    private void setMockarooConfig(String url, String key, int countOfRows) {
         if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(key)) {
             MOCKAROO_URL.set(url);
             MOCKAROO_KEY.set(key);
+            MOCKAROO_ROWS.set(countOfRows);
         }
     }
 }

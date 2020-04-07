@@ -4,5 +4,5 @@ import java.io.IOException;
 
 public interface MockarooClient {
 
-    byte[] loadFile(String url, String key) throws IOException, InterruptedException;
+    byte[] loadFile(String url, String key, int countOfRows) throws IOException, InterruptedException;
 }
