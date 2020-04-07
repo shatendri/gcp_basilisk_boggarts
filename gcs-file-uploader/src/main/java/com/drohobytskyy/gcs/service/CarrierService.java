@@ -2,23 +2,23 @@ package com.drohobytskyy.gcs.service;
 
 public interface CarrierService {
 
-    boolean isEnabled();
+  boolean isEnabled();
 
-    Integer getProcessingInterval();
+  Integer getProcessingInterval();
 
-    String getMockarooUrl();
+  String getMockarooUrl();
 
-    String getMockarooKey();
+  String getMockarooKey();
 
-    Integer getMockarooRows();
+  Integer getMockarooRows();
 
-    void fetchAndUploadFileToBucket(String url, String key, int countOfRaws);
+  void fetchAndUploadFileToBucket(String url, String key, int rows);
 
-    void reLaunchProcessor(
+  void reLaunchProcessor(
       final String url,
       final String key,
-      final int countOfRaws,
+      final int rows,
       final boolean enabled,
       final int processingInterval
-    );
+  );
 }

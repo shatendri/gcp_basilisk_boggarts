@@ -34,12 +34,12 @@ public class MockarooClientImpl implements MockarooClient {
     }
 
     @Override
-    public byte[] loadFile(String url, String key, int countOfRows) throws IOException, InterruptedException {
+    public byte[] loadFile(String url, String key, int rows) throws IOException, InterruptedException {
 
         final URI uri =
           UriComponentsBuilder.fromHttpUrl(url)
             .queryParam(KEY, key)
-            .queryParam(COUNT_OF_ROWS, countOfRows)
+            .queryParam(COUNT_OF_ROWS, rows)
             .build()
             .toUri();
 

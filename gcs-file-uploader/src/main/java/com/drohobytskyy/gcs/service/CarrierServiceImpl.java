@@ -64,8 +64,8 @@ public class CarrierServiceImpl implements CarrierService {
     }
 
     @Override
-    public void fetchAndUploadFileToBucket(String url, String key, int countOfRaws) {
-        setMockarooConfig(url, key, countOfRaws);
+    public void fetchAndUploadFileToBucket(String url, String key, int rows) {
+        setMockarooConfig(url, key, rows);
 
         try {
             final byte[] mockarooFileContent =
