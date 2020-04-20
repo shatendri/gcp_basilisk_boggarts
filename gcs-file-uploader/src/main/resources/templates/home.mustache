@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>CSV Carrier</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<div class="container">
+  <div class="center">
+    <div>
+      <h2>CSV Carrier</h2>
+    </div>
+    <div>
+      <form method="post">
+        <table>
+          <tr>
+            <td><label>Count of seconds between attempts [1-100] :</label></td>
+            <td><input type="number" name="processingInterval" placeholder="seconds"
+                       min="{{minInterval}}" max="{{maxInterval}}" value="{{processingInterval}}">
+            </td>
+          </tr>
+          <tr>
+            <td><label>Is application supposed to work?</label></td>
+            <td>
+              <select name="enabled">
+                <option value="true" {{#isEnabled}}selected{{/isEnabled}}>Enabled</option>
+                <option value="false" {{^isEnabled}}selected{{/isEnabled}}>Disabled</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td><label>Mocakaroo URL</label></td>
+            <td><input type="text" name="mockarooUrl" value="{{mockarooUrl}}"/></td>
+          </tr>
+          <tr>
+            <td><label>Mocakaroo key</label></td>
+            <td><input type="text" name="mockarooKey" value="{{mockarooKey}}"/></td>
+          </tr>
+          <tr>
+            <td><label>Count of rows to be generated [1-1000] :</label></td>
+            <td><input type="number" name="mockarooRows" placeholder="rows"
+                       min="{{minRows}}" max="{{maxRows}}" value= {{mockarooRows}}>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" align="center">
+              <button type="submit">Submit</button>
+            </td>
+          </tr>
+        </table>
+        <br><br>
+      </form>
+    </div>
+    <div>
+
+      {{#isEnabled}}
+        <div>
+          <b>Status: </b>
+          <font color="green">The file is uploaded every {{processingInterval}} seconds.</font>
+        </div>
+      {{/isEnabled}}
+      {{^isEnabled}}
+        <div>
+          <b>Status: </b>
+          <font color="orange">The app is napping right now.</font>
+        </div>
+      {{/isEnabled}}
+      <br><br>
+
+      {{#errors}}
+        <b>Invalid input:</b>
+        <font color="red">{{errors}} <br></font>
+      {{/errors}}
+    </div>
+  </div>
+</div>
+</body>
+
+<style>
+.container {
+  height: 350px;
+  position: relative;
+  border: 3px solid green;
+}
+
+.center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+</style>
+</html>

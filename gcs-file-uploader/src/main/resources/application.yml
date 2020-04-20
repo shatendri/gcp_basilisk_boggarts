@@ -1,0 +1,12 @@
+server:
+  port: 8080
+spring:
+  cloud:
+    gcp:
+      storage:
+        #        bucket: "roman-roman-rrr-bbb"
+        bucket: "gcp-csv-files-bucket"
+  mustache:
+    suffix: .mustache
+mockaroo:
+  timeout: 10
